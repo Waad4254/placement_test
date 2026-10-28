@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار تحديد المستوى | القدرات العامة، القسم الكمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#EEF2F0;
+  --surface:#FFFFFF;
+  --ink:#16302B;
+  --muted:#5B6E69;
+  --line:#D3DDD9;
+  --accent:#0E6B5A;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#DCEFEA;
+  --sure:#0E6B5A;
+  --unsure:#9A5F08;
+  --unsure-soft:#F6EBD6;
+  --guess:#A2414B;
+  --guess-soft:#F5E1E3;
+  --over:#9A5F08;
+  --backdrop:rgba(10,20,18,.45);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#0F1715;
+    --surface:#16211E;
+    --ink:#E3ECE9;
+    --muted:#9AADA8;
+    --line:#2A3A36;
+    --accent:#4CC0A6;
+    --accent-ink:#06231D;
+    --accent-soft:#183A33;
+    --sure:#4CC0A6;
+    --unsure:#E3A94A;
+    --unsure-soft:#3A2E17;
+    --guess:#E8848F;
+    --guess-soft:#3B1E22;
+    --over:#E3A94A;
+    --backdrop:rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,'Geeza Pro',sans-serif;font-size:17px;line-height:1.7}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Top bar */
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:760px;margin:0 auto;padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.where{display:flex;flex-direction:column;line-height:1.35}
+.where strong{font-weight:600;font-size:1rem}
+.where span{color:var(--muted);font-size:.875rem}
+.clock{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;font-variant-numeric:tabular-nums}
+.clock span{font-size:1.35rem;font-weight:600}
+.clock small{color:var(--muted);font-size:.8rem}
+.clock.over span{color:var(--over)}
+
+/* Page */
+main{max-width:760px;margin:0 auto;padding:1.25rem 1.25rem 2rem}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.75rem 1.5rem}
+h1{font-family:'Noto Naskh Arabic',serif;font-weight:700;font-size:2rem;line-height:1.45;margin:0 0 .75rem}
+.lede{font-size:1.1rem;margin:0 0 1.25rem;max-width:60ch}
+.rules{margin:0 0 1.75rem;padding-inline-start:1.25rem;max-width:62ch}
+.rules li{margin:.35rem 0}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem}
+.primary,.ghost{border-radius:999px;padding:.65rem 1.5rem;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);min-height:48px}
+.primary{background:var(--accent);color:var(--accent-ink)}
+.ghost{background:transparent;color:var(--accent)}
+.primary:disabled,.ghost:disabled{opacity:.4;cursor:not-allowed}
+.step{color:var(--muted);margin:0 0 .25rem;font-weight:500}
+.secintro p{max-width:60ch}
+.cmpkey{list-style:none;padding:0;margin:0 0 1.5rem;display:grid;gap:.45rem}
+.cmpkey b{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);margin-inline-end:.6rem}
+
+/* Question navigator */
+.strip{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.cell{width:2.5rem;height:2.5rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-variant-numeric:tabular-nums;cursor:pointer;font-weight:500}
+.cell.done{background:var(--accent-soft);color:var(--ink);border-color:transparent}
+.cell.current{border:2px solid var(--accent);color:var(--ink);font-weight:700}
+.cell:disabled{opacity:.4;cursor:default}
+
+/* Question */
+.qnum{font-family:'Noto Naskh Arabic',serif;font-size:3.25rem;line-height:1;color:var(--accent);font-weight:700;margin:0 0 .6rem;font-variant-numeric:tabular-nums}
+.qtext{font-family:'Noto Naskh Arabic',serif;font-size:1.32rem;line-height:2;margin:0 0 1.25rem;max-width:62ch}
+.qtext:focus{outline:none}
+.tablewrap{overflow-x:auto;margin:0 0 1rem}
+table.data{border-collapse:collapse;min-width:280px;font-size:1rem}
+table.data caption{text-align:start;color:var(--muted);font-size:.9rem;padding-bottom:.4rem}
+table.data th,table.data td{border:1px solid var(--line);padding:.45rem .9rem;text-align:start}
+table.data th{background:var(--bg);font-weight:600}
+table.data td:last-child{font-variant-numeric:tabular-nums}
+.cmp{margin:0 0 1.25rem}
+.given{margin:0 0 .75rem;font-size:1.1rem}
+.given span{color:var(--muted)}
+.cmpgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.cmpgrid div{border:1px dashed var(--line);border-radius:10px;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.3rem}
+.cmpgrid span{color:var(--muted);font-size:.875rem}
+.cmpgrid b{font-family:'Noto Naskh Arabic',serif;font-size:1.35rem;font-weight:600}
+
+.choices{display:grid;gap:.6rem;margin:0 0 1.5rem}
+.choice{display:grid;grid-template-columns:2.4rem 1fr;align-items:center;gap:.75rem;text-align:start;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;min-height:56px;font-size:1.1rem}
+.choice .let{width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-weight:600;color:var(--muted)}
+.choice:hover{border-color:var(--accent)}
+.choice.on{border-color:var(--accent);background:var(--accent-soft)}
+.choice.on .let{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+.conf{border-top:1px solid var(--line);padding-top:1.1rem;margin:0 0 1rem}
+.conf p{margin:0 0 .6rem;font-weight:600}
+.cfrow{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.cf{border:1.5px solid var(--line);background:transparent;border-radius:10px;padding:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;min-height:48px;font-weight:500}
+.cf .mk{font-weight:700}
+.cf-sure.on{border-color:var(--sure);background:var(--accent-soft);color:var(--sure)}
+.cf-unsure.on{border-color:var(--unsure);background:var(--unsure-soft);color:var(--unsure)}
+.cf-guess.on{border-color:var(--guess);background:var(--guess-soft);color:var(--guess)}
+
+.note summary{cursor:pointer;color:var(--muted);font-size:.95rem;padding:.25rem 0}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.6rem 0}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:.35rem .85rem;font-size:.9rem;cursor:pointer}
+.chip.on{border-color:var(--accent);background:var(--accent-soft)}
+.note textarea,.raw textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;resize:vertical}
+
+.qnav{position:sticky;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 0 1rem;margin-top:.5rem}
+.hint{margin:0;color:var(--muted);font-size:.875rem;text-align:center;flex:1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Finish */
+.done p{max-width:60ch}
+.status{min-height:1.6em;color:var(--accent);font-weight:500;margin:.9rem 0 .5rem}
+.raw summary{cursor:pointer;color:var(--muted)}
+.raw textarea{margin-top:.6rem;font-size:.9rem}
+
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:1.5rem;width:min(440px,92vw)}
+dialog::backdrop{background:var(--backdrop)}
+dialog h2{font-family:'Noto Naskh Arabic',serif;margin:0 0 .5rem;font-size:1.4rem}
+dialog p{margin:0 0 1.25rem}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  main{padding:1rem .75rem 1.5rem}
+  .sheet{padding:1.25rem 1rem;border-radius:12px}
+  .qtext{font-size:1.2rem}
+  .qnum{font-size:2.6rem}
+  .cmpgrid{grid-template-columns:1fr}
+  .cf{font-size:.95rem}
+  .cell{width:2.3rem;height:2.3rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .choice,.cf,.chip,.cell{transition:background-color .12s,border-color .12s}
+}
+</style>
+</head>
+<body>
+<header class="bar" id="bar"></header>
+<main id="app"></main>
+
+<dialog id="endDlg" aria-labelledby="endTitle">
+  <form method="dialog">
+    <h2 id="endTitle">إنهاء القسم؟</h2>
+    <p id="endMsg"></p>
+    <div class="actions">
+      <button class="primary" value="ok" id="endOk">إنهاء القسم</button>
+      <button class="ghost" value="cancel">الرجوع للمراجعة</button>
+    </div>
+  </form>
+</dialog>
+
+<noscript><main><div class="sheet"><p>هذا الاختبار يحتاج إلى تفعيل JavaScript في المتصفح.</p></div></main></noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Content ---------- */
+var KEY = 'qudurat-placement-v1';
+var LETTERS = ['أ','ب','ج','د'];
+var CONF = [
+  {id:'sure',   label:'متأكدة',  mark:'✓'},
+  {id:'unsure', label:'متردّدة', mark:'؟'},
+  {id:'guess',  label:'خمّنت',   mark:'✗'}
+];
+var NOTE_CHIPS = ['لم أفهم المطلوب','لم أعرف القانون','عرفت الطريقة لكن أخطأت في الحساب','لم يكفِ الوقت'];
+var CMP_CHOICES = ['القيمة الأولى أكبر','القيمة الثانية أكبر','القيمتان متساويتان','المعطيات غير كافية للمقارنة'];
+var CMP_SKILL = 'أسئلة المقارنة';
+
+var SECTIONS = [
+  {title:'القسم الأول',    from:1,  to:10, suggested:600},
+  {title:'القسم الثاني',   from:11, to:20, suggested:600},
+  {title:'القسم الثالث',   from:21, to:30, suggested:600},
+  {title:'أسئلة المقارنة', from:31, to:36, suggested:360, cmp:true}
+];
+
+var SALES_TABLE = '<table class="data"><caption>عدد القطع المبيعة في متجر خلال أربعة أشهر</caption>' +
+  '<thead><tr><th>الشهر</th><th>عدد القطع المبيعة</th></tr></thead><tbody>' +
+  '<tr><td>محرم</td><td>120</td></tr><tr><td>صفر</td><td>150</td></tr>' +
+  '<tr><td>ربيع الأول</td><td>90</td></tr><tr><td>ربيع الآخر</td><td>140</td></tr></tbody></table>';
+
+var Q = [
+  {n:1, skill:'الكسور والأعداد العشرية', text:'ما قيمة: (3/4 + 1/6) ÷ 11/12 ؟', choices:['1/2','11/12','1','12/11'], ans:2,
+    diag:{1:'إجراء الجمع ثم التوقف قبل القسمة', 3:'قلب الكسر الخطأ عند القسمة'}},
+  {n:2, skill:'المعادلات والتعابير الجبرية', text:'إذا كان 3س − 7 = 2س + 5، فما قيمة س؟', choices:['2','12','10','14'], ans:1,
+    diag:{0:'خطأ في الإشارة عند نقل الحدود'}},
+  {n:3, skill:'المتتابعات والأنماط', text:'ما العدد التالي في المتتابعة: 2، 6، 12، 20، 30، ... ؟', choices:['42','40','44','48'], ans:0,
+    diag:{1:'افتراض زيادة ثابتة بدل زيادة تكبر في كل خطوة'}},
+  {n:4, skill:'الزوايا والمثلثات', text:'مثلث قياس زاويته الثانية مِثلا قياس زاويته الأولى، وقياس زاويته الثالثة ثلاثة أمثال قياس الأولى. ما قياس أكبر زاوية فيه؟', choices:['60°','80°','120°','90°'], ans:3,
+    diag:{0:'إيجاد زاوية غير المطلوبة (الزاوية الثانية بدل الأكبر)'}},
+  {n:5, skill:'النسبة المئوية', text:'إذا كان 25% من عدد يساوي 45، فما 40% من العدد نفسه؟', choices:['60','72','75','90'], ans:1, diag:{}},
+  {n:6, skill:'المتوسط والوسيط', text:'متوسط أربعة أعداد يساوي 15. إذا أُضيف إليها عدد خامس أصبح متوسط الأعداد الخمسة 16. ما العدد الخامس؟', choices:['16','18','20','21'], ans:2,
+    diag:{0:'افتراض أن العدد المضاف يساوي المتوسط الجديد'}},
+  {n:7, skill:'خصائص الأعداد', text:'ما أصغر عدد صحيح موجب يقبل القسمة على كلٍّ من 4 و6 و10؟', choices:['60','30','120','240'], ans:0,
+    diag:{2:'مضاعف مشترك لكنه ليس الأصغر', 3:'ضرب الأعداد بدل إيجاد المضاعف المشترك الأصغر'}},
+  {n:8, skill:'المساحة والمحيط', text:'مستطيل محيطه 30 سم، وطوله مِثلا عرضه. ما مساحته؟', choices:['45 سم²','56 سم²','60 سم²','50 سم²'], ans:3, diag:{}},
+  {n:9, skill:'ترجمة المسألة اللفظية إلى معادلة', text:'عمر أمٍّ الآن ثلاثة أمثال عمر ابنتها، وبعد 10 سنوات سيصبح عمر الأم مِثلَي عمر ابنتها. كم عمر الابنة الآن؟', choices:['5','10','15','20'], ans:1, diag:{}},
+  {n:10, skill:'النسبة والتناسب', text:'النسبة بين عدد الكتب العربية وعدد الكتب الإنجليزية في مكتبة هي 3 : 5. إذا كان عدد الكتب الإنجليزية 30 كتاباً، فكم عدد الكتب في المكتبة كلها؟', choices:['18','40','48','50'], ans:2,
+    diag:{0:'إيجاد عدد الكتب العربية فقط بدل المجموع'}},
+
+  {n:11, skill:'الكسور والأعداد العشرية', text:'أيّ الأعداد الآتية هو الأكبر؟', choices:['0.6','5/8','0.58','3/5'], ans:1,
+    diag:{0:'مقارنة غير دقيقة بين الكسور والأعداد العشرية', 2:'مقارنة الأعداد العشرية بعدد الأرقام لا بالقيمة', 3:'مقارنة غير دقيقة بين الكسور والأعداد العشرية'}},
+  {n:12, skill:'الأسس والجذور', text:'إذا كان العدد 3 مرفوعاً للقوة (س + 1) يساوي 81، فما قيمة س؟', choices:['2','4','3','27'], ans:2,
+    diag:{1:'إيجاد الأس (س + 1) ونسيان طرح 1', 3:'قسمة 81 على 3 بدل التفكير في الأسس'}},
+  {n:13, skill:'مسائل السرعة والعمل', text:'سافرت ريم إلى مدينة تبعد 120 كم بسرعة 60 كم/ساعة، ثم عادت في الطريق نفسه بسرعة 40 كم/ساعة. ما متوسط سرعتها في الرحلة كلها ذهاباً وإياباً (بالكيلومتر في الساعة)؟', choices:['45','50','52','48'], ans:3,
+    diag:{1:'أخذ متوسط السرعتين بدل (المسافة الكلية ÷ الزمن الكلي)'}},
+  {n:14, skill:'المساحة والمحيط', text:'دائرة محيطها 10π سم. ما مساحتها؟', choices:['25π سم²','10π سم²','20π سم²','100π سم²'], ans:0,
+    diag:{1:'خلط بين المحيط والمساحة', 3:'استخدام القطر بدل نصف القطر'}},
+  {n:15, skill:'المتوسط والوسيط', text:'ما الوسيط للأعداد: 7، 1، 18، 2، 15، 5 ؟', choices:['5','8','6','10'], ans:2,
+    diag:{0:'اختيار أحد العددين الأوسطين بدل متوسطهما', 1:'حساب المتوسط الحسابي بدل الوسيط', 3:'عدم ترتيب الأعداد قبل إيجاد الوسيط'}},
+  {n:16, skill:'النسبة المئوية', text:'ارتفع سعر جهاز بنسبة 20%، ثم انخفض سعره الجديد بنسبة 20%. كيف أصبح السعر النهائي مقارنةً بالسعر الأصلي؟', choices:['لم يتغيّر','أقل بنسبة 4%','أكثر بنسبة 4%','أقل بنسبة 2%'], ans:1,
+    diag:{0:'جمع النسب المئوية مباشرة دون مراعاة تغيّر الأساس'}},
+  {n:17, skill:'خصائص الأعداد', text:'إذا كان س عدداً صحيحاً فردياً، فأيّ مما يأتي يكون عدداً زوجياً دائماً؟', choices:['س²','3س','2س + 1','س + 1'], ans:3,
+    diag:{0:'عدم اختبار الخيارات بالتعويض بعدد فردي', 1:'عدم اختبار الخيارات بالتعويض بعدد فردي', 2:'عدم اختبار الخيارات بالتعويض بعدد فردي'}},
+  {n:18, skill:'المتتابعات والأنماط', text:'ما العدد التالي في المتتابعة: 5، 9، 17، 33، ... ؟', choices:['65','49','57','66'], ans:0,
+    diag:{1:'افتراض تكرار الفرق نفسه بدل تضاعفه'}},
+  {n:19, skill:'فيثاغورس والمجسمات', text:'مثلث قائم الزاوية، طولا ضلعي الزاوية القائمة فيه 6 سم و8 سم. ما محيطه؟', choices:['14 سم','28 سم','24 سم','48 سم'], ans:2,
+    diag:{0:'جمع الضلعين دون إيجاد الوتر', 3:'ضرب الضلعين بدل حساب المحيط'}},
+  {n:20, skill:'الاحتمالات والعد', text:'صندوق فيه 4 كرات حمراء و6 كرات زرقاء. سُحبت منه كرتان، واحدة بعد الأخرى، دون إرجاع. ما احتمال أن تكون الكرتان حمراوين؟', choices:['4/25','2/15','2/5','1/6'], ans:1,
+    diag:{0:'معاملة السحب كأنه مع إرجاع', 2:'حساب احتمال سحب كرة واحدة فقط'}},
+
+  {n:21, skill:'الأسس والجذور', text:'ما الجذر التربيعي للعدد 0.0009 ؟', choices:['0.3','0.003','0.0003','0.03'], ans:3,
+    diag:{0:'خطأ في عدد المنازل العشرية للجذر', 1:'خطأ في عدد المنازل العشرية للجذر', 2:'خطأ في عدد المنازل العشرية للجذر'}},
+  {n:22, skill:'النسبة والتناسب', text:'ينجز 6 عمّال عملاً في 12 يوماً. في كم يوماً ينجز 4 عمّال العمل نفسه إذا عملوا بالمعدّل نفسه؟', choices:['8','18','15','24'], ans:1,
+    diag:{0:'استخدام تناسب طردي بدل التناسب العكسي'}},
+  {n:23, skill:'الزوايا والمثلثات', text:'مضلّع منتظم قياس كل زاوية داخلية فيه 120°. كم عدد أضلاعه؟', choices:['6','5','8','10'], ans:0, diag:{}},
+  {n:24, skill:'المعادلات والتعابير الجبرية', text:'إذا كان س + ص = 7، وكان س − ص = 3، فما قيمة س² − ص² ؟', choices:['10','40','21','49'], ans:2,
+    diag:{3:'تربيع المجموع بدل تحليل الفرق بين مربعين'}},
+  {n:25, skill:'مسائل السرعة والعمل', text:'يملأ صنبور حوضاً في 6 ساعات، ويملؤه صنبور آخر في 3 ساعات. إذا فُتح الصنبوران معاً، ففي كم ساعة يمتلئ الحوض؟', choices:['4.5','3','9','2'], ans:3,
+    diag:{0:'أخذ متوسط الزمنين بدل جمع معدّلي العمل', 2:'جمع الزمنين بدل جمع معدّلي العمل'}},
+  {n:26, skill:'فيثاغورس والمجسمات', text:'مكعب حجمه 64 سم³. ما مجموع مساحات أوجهه الستة؟', choices:['96 سم²','16 سم²','64 سم²','128 سم²'], ans:0,
+    diag:{1:'حساب مساحة وجه واحد فقط', 2:'خلط بين الحجم والمساحة'}},
+  {n:27, skill:'الاحتمالات والعد', text:'ستّ صديقات، صافحت كل واحدة منهن كل واحدة من الأخريات مرة واحدة فقط. كم عدد المصافحات كلها؟', choices:['12','30','15','36'], ans:2,
+    diag:{1:'عدّ كل مصافحة مرتين', 3:'ضرب 6 × 6 دون الانتباه للتكرار'}},
+  {n:28, skill:'ترجمة المسألة اللفظية إلى معادلة', text:'في فصل 40 طالبة: 25 منهن مشتركات في نادي الرياضيات، و20 مشتركات في نادي العلوم، و8 غير مشتركات في أيٍّ من الناديين. كم طالبة مشتركة في الناديين معاً؟', choices:['5','13','8','15'], ans:1,
+    diag:{0:'نسيان استبعاد غير المشتركات من العدد الكلي'}},
+  {n:29, skill:'قراءة الجداول', table:true, text:'ما نسبة الزيادة في المبيعات من شهر محرم إلى شهر صفر؟', choices:['20%','30%','50%','25%'], ans:3,
+    diag:{0:'القسمة على القيمة الجديدة بدل الأصلية', 1:'معاملة مقدار الزيادة كأنه نسبة مئوية'}},
+  {n:30, skill:'قراءة الجداول', table:true, text:'ما النسبة التي تمثلها مبيعات شهر ربيع الأول من مجموع مبيعات الأشهر الأربعة؟', choices:['18%','9%','20%','25%'], ans:0, diag:{}},
+
+  {n:31, skill:CMP_SKILL, sub:'مقارنة الكسور', cmp:{given:'', a:'3/7', b:'4/9'}, ans:1,
+    diag:{0:'مقارنة غير دقيقة بين كسرين', 2:'مقارنة غير دقيقة بين كسرين'}},
+  {n:32, skill:CMP_SKILL, sub:'اختبار الحالات', cmp:{given:'س عدد حقيقي', a:'س²', b:'س'}, ans:3,
+    diag:{0:'تجربة أعداد أكبر من 1 فقط دون الكسور أو الصفر أو السالب', 1:'تجربة نوع واحد من الأعداد فقط', 2:'تجربة نوع واحد من الأعداد فقط'}},
+  {n:33, skill:CMP_SKILL, sub:'النسبة المئوية', cmp:{given:'', a:'20% من 50', b:'50% من 20'}, ans:2, diag:{}},
+  {n:34, skill:CMP_SKILL, sub:'التعابير الجبرية', cmp:{given:'س عدد موجب', a:'(س + 1)²', b:'س² + 1'}, ans:0,
+    diag:{2:'فكّ القوس بتربيع كل حد على حدة', 3:'عدم الانتباه إلى أن س موجب يحسم المقارنة'}},
+  {n:35, skill:CMP_SKILL, sub:'الهندسة', cmp:{given:'مثلث أطوال أضلاعه 5 سم و12 سم و13 سم', a:'مساحة المثلث بالسنتيمتر المربع', b:'30'}, ans:2,
+    diag:{3:'عدم ملاحظة أن المثلث قائم الزاوية'}},
+  {n:36, skill:CMP_SKILL, sub:'اختبار الحالات', cmp:{given:'س و ص عددان صحيحان موجبان، و س + ص = 10', a:'س × ص', b:'25'}, ans:3,
+    diag:{1:'عدم اختبار حالة س = ص = 5', 2:'الاكتفاء باختبار حالة واحدة'}}
+];
+var byN = {};
+Q.forEach(function(q){ byN[q.n] = q; });
+
+/* ---------- State ---------- */
+var store = {
+  get: function(){ try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; } },
+  set: function(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} },
+  clear: function(){ try { localStorage.removeItem(KEY); } catch(e){} }
+};
+if (/[?&]reset\b/.test(location.search)) {
+  store.clear();
+  try { history.replaceState(null, '', location.pathname); } catch(e){}
+}
+function fresh(){
+  return {v:1, screen:'welcome', sec:0, cur:1, reached:[0,0,0,0], ans:{}, secTime:[0,0,0,0], qTime:{}, startedAt:null, finishedAt:null};
+}
+var S = store.get();
+if (!S || S.v !== 1) S = fresh();
+var resumePrompt = (S.screen === 'question' || S.screen === 'secIntro');
+var ui = {noteOpen:{}, lastQ:null};
+
+var app = document.getElementById('app');
+var bar = document.getElementById('bar');
+var dlg = document.getElementById('endDlg');
+
+function save(){ store.set(S); }
+function A(n){ if (!S.ans[n]) S.ans[n] = {c:null, f:null, note:''}; return S.ans[n]; }
+function complete(n){ var a = S.ans[n]; return !!(a && a.c !== null && a.f !== null); }
+function p2(x){ return (x < 10 ? '0' : '') + x; }
+function fmt(ms){ var t = Math.round(ms/1000); return Math.floor(t/60) + ':' + p2(t % 60); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function noteParts(note){ return note.split('،').map(function(x){ return x.trim(); }).filter(Boolean); }
+function inQuestion(){ return S.screen === 'question' && !resumePrompt; }
+
+/* ---------- Rendering ---------- */
+function renderHeader(){
+  if (inQuestion()) {
+    var sec = SECTIONS[S.sec];
+    var pos = S.cur - sec.from + 1, total = sec.to - sec.from + 1;
+    var over = S.secTime[S.sec] > sec.suggested * 1000;
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>' + sec.title + '</strong><span>السؤال ' + pos + ' من ' + total + '</span></div>' +
+      '<div class="clock' + (over ? ' over' : '') + '" id="clock" role="timer" aria-label="الوقت المستغرق في هذا القسم">' +
+      '<span id="clockVal">' + fmt(S.secTime[S.sec]) + '</span><small>الوقت المقترح ' + fmt(sec.suggested * 1000) + '</small></div></div>';
+  } else {
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>اختبار تحديد المستوى</strong><span>القدرات العامة، القسم الكمي</span></div></div>';
+  }
+}
+
+function renderWelcome(){
+  var buttons = resumePrompt
+    ? '<button class="primary" data-action="resume">متابعة الاختبار</button><button class="ghost" data-action="restart">البدء من جديد</button>'
+    : '<button class="primary" data-action="start">ابدئي الاختبار</button>';
+  return '<section class="sheet intro">' +
+    '<h1>اختبار تحديد المستوى</h1>' +
+    '<p class="lede">هذا الاختبار ليس لقياس درجتك، بل لنعرف بدقة أيّ أنواع الأسئلة تحتاجين التركيز عليها. الخطأ هنا مفيد، فلا تقلقي منه.</p>' +
+    '<ul class="rules">' +
+      '<li>36 سؤالاً في أربعة أقسام. بعد إنهاء أي قسم لا يمكن الرجوع إليه.</li>' +
+      '<li>بدون آلة حاسبة. جهّزي ورقة وقلماً للحل، واحتفظي بالورقة بعد الانتهاء.</li>' +
+      '<li>يظهر في الأعلى وقت القسم والوقت المقترح له. إن تجاوزتِه أكملي بهدوء.</li>' +
+      '<li>مع كل إجابة اختاري مدى ثقتك بها: متأكدة، أو متردّدة، أو خمّنت.</li>' +
+      '<li>إذا توقفتِ عند سؤال، أضيفي ملاحظة قصيرة عن السبب.</li>' +
+      '<li>يُحفظ تقدّمك تلقائياً على هذا الجهاز، فإذا أُغلقت الصفحة تتابعين من حيث توقفتِ.</li>' +
+    '</ul>' +
+    '<div class="actions">' + buttons + '</div></section>';
+}
+
+function renderSecIntro(){
+  var s = SECTIONS[S.sec];
+  var extra = s.cmp
+    ? '<p>في كل سؤال ستظهر قيمتان. قارني بينهما، ثم اختاري:</p><ol class="cmpkey">' +
+        CMP_CHOICES.map(function(c, i){ return '<li><b>' + LETTERS[i] + '</b>' + c + '</li>'; }).join('') + '</ol>'
+    : '<p>أسئلة هذا القسم من موضوعات مختلفة ومرتبة عشوائياً، كما في الاختبار الحقيقي.</p>';
+  return '<section class="sheet secintro"><p class="step">القسم ' + (S.sec + 1) + ' من ' + SECTIONS.length + '</p>' +
+    '<h1>' + s.title + '</h1>' +
+    '<p>الأسئلة من ' + s.from + ' إلى ' + s.to + '. الوقت المقترح ' + (s.suggested / 60) + ' دقائق.</p>' + extra +
+    '<div class="actions"><button class="primary" data-action="begin">ابدئي القسم</button></div></section>';
+}
+
+function renderQuestion(){
+  var sec = SECTIONS[S.sec], q = byN[S.cur], a = A(S.cur);
+  var n, strip = '';
+  for (n = sec.from; n <= sec.to; n++) {
+    var locked = n > S.reached[S.sec];
+    var cls = 'cell' + (n === S.cur ? ' current' : '') + (complete(n) ? ' done' : '');
+    strip += '<button class="' + cls + '" data-action="go" data-n="' + n + '"' + (locked ? ' disabled' : '') +
+      ' aria-label="السؤال ' + n + (complete(n) ? '، تمت الإجابة' : '') + '"' + (n === S.cur ? ' aria-current="step"' : '') + '>' + n + '</button>';
+  }
+
+  var body = '';
+  if (q.table) body += '<div class="tablewrap">' + SALES_TABLE + '</div>';
+  if (q.cmp) {
+    body += '<p class="qtext" id="qtext" tabindex="-1">قارني بين القيمة الأولى والقيمة الثانية.</p>';
+    body += '<div class="cmp">' + (q.cmp.given ? '<p class="given"><span>المعطيات: </span>' + q.cmp.given + '</p>' : '') +
+      '<div class="cmpgrid"><div><span>القيمة الأولى</span><b>' + q.cmp.a + '</b></div><div><span>القيمة الثانية</span><b>' + q.cmp.b + '</b></div></div></div>';
+  } else {
+    body += '<p class="qtext" id="qtext" tabindex="-1">' + q.text + '</p>';
+  }
+
+  var opts = q.cmp ? CMP_CHOICES : q.choices;
+  var choices = opts.map(function(c, i){
+    var on = a.c === i;
+    return '<button class="choice' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-action="choose" data-i="' + i + '">' +
+      '<span class="let">' + LETTERS[i] + '</span><span class="ct">' + c + '</span></button>';
+  }).join('');
+
+  var conf = CONF.map(function(c){
+    var on = a.f === c.id;
+    return '<button class="cf cf-' + c.id + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-action="conf" data-f="' + c.id + '">' +
+      '<span class="mk" aria-hidden="true">' + c.mark + '</span>' + c.label + '</button>';
+  }).join('');
+
+  var parts = noteParts(a.note);
+  var chips = NOTE_CHIPS.map(function(t){
+    var on = parts.indexOf(t) !== -1;
+    return '<button class="chip' + (on ? ' on' : '') + '" data-action="chip" data-t="' + esc(t) + '" aria-pressed="' + on + '">' + t + '</button>';
+  }).join('');
+  var open = a.note || ui.noteOpen[S.cur];
+
+  var ok = complete(S.cur);
+  var lastInSec = S.cur === sec.to;
+  var lastSec = S.sec === SECTIONS.length - 1;
+  var nextLabel = lastInSec ? (lastSec ? 'إنهاء الاختبار' : 'إنهاء القسم') : 'التالي';
+
+  return '<nav class="strip" aria-label="أسئلة القسم">' + strip + '</nav>' +
+    '<article class="sheet q">' +
+      '<div class="qnum" aria-hidden="true">' + q.n + '</div>' + body +
+      '<div class="choices" role="radiogroup" aria-label="الخيارات">' + choices + '</div>' +
+      '<div class="conf"><p id="confLbl">كم أنتِ متأكدة من إجابتك؟</p><div class="cfrow" role="radiogroup" aria-labelledby="confLbl">' + conf + '</div></div>' +
+      '<details class="note"' + (open ? ' open' : '') + '><summary>واجهتِ صعوبة في هذا السؤال؟ أضيفي ملاحظة</summary>' +
+        '<div class="chips">' + chips + '</div>' +
+        '<label class="sr" for="note">ملاحظة عن السؤال</label>' +
+        '<textarea id="note" rows="2" placeholder="اكتبي بكلماتك ما الذي أوقفك (اختياري)">' + esc(a.note) + '</textarea>' +
+      '</details>' +
+    '</article>' +
+    '<div class="qnav">' +
+      '<button class="ghost" data-action="prev"' + (S.cur === sec.from ? ' disabled' : '') + '>السابق</button>' +
+      '<p class="hint" aria-live="polite">' + (ok ? '' : 'اختاري إجابة ومدى ثقتك للمتابعة') + '</p>' +
+      '<button class="primary" data-action="next"' + (ok ? '' : ' disabled') + '>' + nextLabel + '</button>' +
+    '</div>';
+}
+
+function renderDone(){
+  var total = S.secTime.reduce(function(x, y){ return x + y; }, 0);
+  var canShare = typeof navigator.share === 'function';
+  return '<section class="sheet done">' +
+    '<h1>انتهى الاختبار</h1>' +
+    '<p>أحسنتِ. استغرق الحل ' + fmt(total) + ' دقيقة.</p>' +
+    '<p>الخطوة الأخيرة: أرسلي النتيجة لمن أعطاكِ رابط الاختبار.</p>' +
+    '<div class="actions">' +
+      (canShare ? '<button class="primary" data-action="share">إرسال النتيجة</button>' : '') +
+      '<button class="' + (canShare ? 'ghost' : 'primary') + '" data-action="copy">نسخ النتيجة</button>' +
+      '<button class="ghost" data-action="download">تنزيل ملف النتيجة</button>' +
+    '</div>' +
+    '<p class="status" id="status" aria-live="polite"></p>' +
+    '<details class="raw"><summary>عرض نص النتيجة</summary><textarea id="rep" readonly rows="12">' + esc(report()) + '</textarea></details>' +
+    '</section>';
+}
+
+function render(){
+  renderHeader();
+  var html;
+  if (resumePrompt || S.screen === 'welcome') html = renderWelcome();
+  else if (S.screen === 'secIntro') html = renderSecIntro();
+  else if (S.screen === 'question') html = renderQuestion();
+  else html = renderDone();
+  app.innerHTML = html;
+  if (inQuestion()) {
+    if (ui.lastQ !== S.cur) {
+      ui.lastQ = S.cur;
+      window.scrollTo(0, 0);
+      var t = document.getElementById('qtext');
+      if (t) t.focus({preventScroll:true});
+    }
+  } else {
+    ui.lastQ = null;
+  }
+}
+function refocus(sel){ var el = app.querySelector(sel); if (el) el.focus(); }
+
+/* ---------- Report ---------- */
+function isRight(q){ var a = S.ans[q.n]; return !!(a && a.c === q.ans); }
+
+function report(){
+  var L = [];
+  var d = new Date(S.finishedAt || Date.now());
+  var stamp = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  var score = Q.filter(isRight).length;
+  var total = S.secTime.reduce(function(x, y){ return x + y; }, 0);
+
+  L.push('نتيجة اختبار تحديد المستوى: القدرات العامة، القسم الكمي');
+  L.push('تاريخ الإنهاء: ' + stamp);
+  L.push('');
+  L.push('الدرجة: ' + score + ' من ' + Q.length);
+  L.push('الوقت الكلي: ' + fmt(total));
+  L.push('');
+  L.push('الأقسام:');
+  SECTIONS.forEach(function(s, i){
+    var c = 0;
+    for (var n = s.from; n <= s.to; n++) if (isRight(byN[n])) c++;
+    L.push('- ' + s.title + ': ' + c + ' من ' + (s.to - s.from + 1) + '، الوقت ' + fmt(S.secTime[i]) + ' (المقترح ' + fmt(s.suggested * 1000) + ')');
+  });
+  L.push('');
+
+  var m = {sure:[0,0], unsure:[0,0], guess:[0,0]}, wrongSure = [], rightGuess = [];
+  Q.forEach(function(q){
+    var a = S.ans[q.n];
+    if (!a || !a.f) return;
+    var r = isRight(q);
+    m[a.f][r ? 0 : 1]++;
+    if (!r && a.f === 'sure') wrongSure.push('س' + q.n);
+    if (r && a.f === 'guess') rightGuess.push('س' + q.n);
+  });
+  L.push('الثقة مقابل الصحة:');
+  CONF.forEach(function(c){ L.push('- ' + c.label + ': ' + m[c.id][0] + ' صحيحة، ' + m[c.id][1] + ' خاطئة'); });
+  L.push('- خاطئة مع ثقة (فهم خاطئ محتمل): ' + (wrongSure.join('، ') || 'لا يوجد'));
+  L.push('- صحيحة بالتخمين (معرفة غير ثابتة): ' + (rightGuess.join('، ') || 'لا يوجد'));
+  L.push('');
+
+  var sk = {}, order = [];
+  Q.forEach(function(q){
+    if (!sk[q.skill]) { sk[q.skill] = {r:0, t:0, ns:[]}; order.push(q.skill); }
+    sk[q.skill].t++;
+    sk[q.skill].ns.push('س' + q.n);
+    if (isRight(q)) sk[q.skill].r++;
+  });
+  order.sort(function(x, y){ return (sk[x].r / sk[x].t) - (sk[y].r / sk[y].t); });
+  L.push('حسب المهارة (الأضعف أولاً):');
+  order.forEach(function(k){ L.push('- ' + k + ': ' + sk[k].r + ' من ' + sk[k].t + ' (' + sk[k].ns.join('، ') + ')'); });
+  L.push('');
+
+  L.push('تفصيل الأسئلة:');
+  Q.forEach(function(q){
+    var a = S.ans[q.n] || {c:null, f:null, note:''};
+    var r = isRight(q);
+    var pick = a.c === null ? 'بلا إجابة' : (r ? LETTERS[a.c] : LETTERS[a.c] + ' (الصحيح ' + LETTERS[q.ans] + ')');
+    var cf = '';
+    CONF.forEach(function(c){ if (c.id === a.f) cf = c.label; });
+    var topic = q.cmp ? 'المقارنة: ' + q.sub : q.skill;
+    L.push('س' + q.n + ' | ' + topic + ' | ' + pick + ' | ' + (r ? 'صحيحة' : 'خاطئة') + ' | ' + (cf || 'بلا ثقة') + ' | ' + fmt(S.qTime[q.n] || 0));
+    if (!r && a.c !== null && q.diag && q.diag[a.c]) L.push('    خطأ محتمل: ' + q.diag[a.c]);
+    if (a.note && a.note.trim()) L.push('    ملاحظتها: ' + a.note.trim());
+  });
+  return L.join('\n');
+}
+
+/* ---------- Actions ---------- */
+function status(msg){ var el = document.getElementById('status'); if (el) el.textContent = msg; }
+
+function copyText(text){
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).then(function(){ return true; }, function(){ return legacyCopy(text); });
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+function legacyCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){}
+  ta.remove();
+  return ok;
+}
+
+function openEnd(){
+  var s = SECTIONS[S.sec];
+  var isLast = S.sec === SECTIONS.length - 1;
+  var msg = isLast ? 'هذا آخر قسم. بعد إنهائه ينتهي الاختبار ولا يمكن تعديل الإجابات.' : 'بعد إنهاء ' + s.title + ' لا يمكنك الرجوع إليه أو تعديل إجاباته.';
+  document.getElementById('endTitle').textContent = isLast ? 'إنهاء الاختبار؟' : 'إنهاء القسم؟';
+  document.getElementById('endMsg').textContent = msg;
+  document.getElementById('endOk').textContent = isLast ? 'إنهاء الاختبار' : 'إنهاء القسم';
+  if (dlg && typeof dlg.showModal === 'function') {
+    dlg.returnValue = '';
+    dlg.showModal();
+  } else if (window.confirm(msg)) {
+    endSection();
+  }
+}
+if (dlg) dlg.addEventListener('close', function(){ if (dlg.returnValue === 'ok') endSection(); });
+
+function endSection(){
+  if (S.sec < SECTIONS.length - 1) { S.sec++; S.screen = 'secIntro'; }
+  else { S.finishedAt = Date.now(); S.screen = 'done'; }
+  save(); render(); window.scrollTo(0, 0);
+}
+
+app.addEventListener('click', function(e){
+  var b = e.target.closest('[data-action]');
+  if (!b || b.disabled) return;
+  var act = b.dataset.action, sec = SECTIONS[S.sec], a;
+  switch (act) {
+    case 'start':
+      S = fresh(); S.startedAt = Date.now(); S.screen = 'secIntro';
+      save(); render(); break;
+    case 'resume':
+      resumePrompt = false; render(); break;
+    case 'restart':
+      if (window.confirm('سيُحذف كل ما أجبتِ عنه وتبدئين من جديد. هل أنتِ متأكدة؟')) {
+        S = fresh(); resumePrompt = false; ui.noteOpen = {}; ui.lastQ = null; save(); render();
+      }
+      break;
+    case 'begin':
+      S.cur = sec.from; S.reached[S.sec] = Math.max(S.reached[S.sec], sec.from); S.screen = 'question';
+      save(); render(); break;
+    case 'choose':
+      A(S.cur).c = +b.dataset.i; save(); render();
+      refocus('[data-action="choose"][data-i="' + b.dataset.i + '"]'); break;
+    case 'conf':
+      A(S.cur).f = b.dataset.f; save(); render();
+      refocus('[data-action="conf"][data-f="' + b.dataset.f + '"]'); break;
+    case 'chip':
+      a = A(S.cur);
+      var t = b.dataset.t, parts = noteParts(a.note);
+      parts = parts.indexOf(t) !== -1 ? parts.filter(function(x){ return x !== t; }) : parts.concat(t);
+      a.note = parts.join('، '); ui.noteOpen[S.cur] = true; save(); render();
+      refocus('[data-action="chip"][data-t="' + t + '"]'); break;
+    case 'go':
+      S.cur = +b.dataset.n; save(); render(); break;
+    case 'prev':
+      if (S.cur > sec.from) { S.cur--; save(); render(); }
+      break;
+    case 'next':
+      if (!complete(S.cur)) return;
+      if (S.cur < sec.to) { S.cur++; S.reached[S.sec] = Math.max(S.reached[S.sec], S.cur); save(); render(); }
+      else openEnd();
+      break;
+    case 'share':
+      navigator.share({title:'نتيجة اختبار القدرات', text:report()})
+        .then(function(){ status('تمت المشاركة.'); })
+        .catch(function(err){ if (!err || err.name !== 'AbortError') status('تعذّرت المشاركة. استخدمي زر نسخ النتيجة.'); });
+      break;
+    case 'copy':
+      copyText(report()).then(function(ok){
+        status(ok ? 'تم نسخ النتيجة. الصقيها في رسالة وأرسليها.' : 'لم يتم النسخ تلقائياً. افتحي «عرض نص النتيجة» وانسخيه يدوياً.');
+      });
+      break;
+    case 'download':
+      var blob = new Blob(['\ufeff' + report()], {type:'text/plain;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url; link.download = 'qudurat-placement-result.txt';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      status('تم تنزيل ملف النتيجة.');
+      break;
+  }
+});
+
+app.addEventListener('input', function(e){
+  if (e.target.id === 'note') { A(S.cur).note = e.target.value; save(); }
+});
+app.addEventListener('toggle', function(e){
+  if (e.target.classList && e.target.classList.contains('note')) ui.noteOpen[S.cur] = e.target.open;
+}, true);
+
+/* ---------- Timer: counts only while a question is on screen and the tab is visible ---------- */
+var lastTick = Date.now();
+setInterval(function(){
+  var now = Date.now(), d = now - lastTick;
+  lastTick = now;
+  if (d > 5000) d = 1000;
+  if (inQuestion() && !document.hidden) {
+    S.secTime[S.sec] += d;
+    S.qTime[S.cur] = (S.qTime[S.cur] || 0) + d;
+    var v = document.getElementById('clockVal');
+    if (v) v.textContent = fmt(S.secTime[S.sec]);
+    var c = document.getElementById('clock');
+    if (c) c.classList.toggle('over', S.secTime[S.sec] > SECTIONS[S.sec].suggested * 1000);
+    save();
+  }
+}, 1000);
+document.addEventListener('visibilitychange', function(){ lastTick = Date.now(); });
+
+render();
+})();
+</script>
+</body>
+</html>
