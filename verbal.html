@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار تحديد المستوى | القدرات العامة، القسم اللفظي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#EEF2F0; --surface:#FFFFFF; --ink:#16302B; --muted:#5B6E69; --line:#D3DDD9;
+  --accent:#0E6B5A; --accent-ink:#FFFFFF; --accent-soft:#DCEFEA;
+  --sure:#0E6B5A; --unsure:#9A5F08; --unsure-soft:#F6EBD6; --guess:#A2414B; --guess-soft:#F5E1E3;
+  --over:#9A5F08; --backdrop:rgba(10,20,18,.45);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#0F1715; --surface:#16211E; --ink:#E3ECE9; --muted:#9AADA8; --line:#2A3A36;
+    --accent:#4CC0A6; --accent-ink:#06231D; --accent-soft:#183A33;
+    --sure:#4CC0A6; --unsure:#E3A94A; --unsure-soft:#3A2E17; --guess:#E8848F; --guess-soft:#3B1E22;
+    --over:#E3A94A; --backdrop:rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,'Geeza Pro',sans-serif;font-size:17px;line-height:1.7}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:760px;margin:0 auto;padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.where{display:flex;flex-direction:column;line-height:1.35}
+.where strong{font-weight:600;font-size:1rem}
+.where span{color:var(--muted);font-size:.875rem}
+.clock{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;font-variant-numeric:tabular-nums}
+.clock span{font-size:1.35rem;font-weight:600}
+.clock small{color:var(--muted);font-size:.8rem}
+.clock.over span{color:var(--over)}
+
+main{max-width:760px;margin:0 auto;padding:1.25rem 1.25rem 2rem}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.75rem 1.5rem}
+h1{font-family:'Noto Naskh Arabic',serif;font-weight:700;font-size:2rem;line-height:1.45;margin:0 0 .75rem}
+.lede{font-size:1.1rem;margin:0 0 1.25rem;max-width:60ch}
+.rules{margin:0 0 1.75rem;padding-inline-start:1.25rem;max-width:62ch}
+.rules li{margin:.35rem 0}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem}
+.primary,.ghost{border-radius:999px;padding:.65rem 1.5rem;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);min-height:48px}
+.primary{background:var(--accent);color:var(--accent-ink)}
+.ghost{background:transparent;color:var(--accent)}
+.primary:disabled,.ghost:disabled{opacity:.4;cursor:not-allowed}
+.step{color:var(--muted);margin:0 0 .25rem;font-weight:500}
+.secintro p,.secintro li{max-width:60ch}
+.types{padding-inline-start:1.25rem;margin:0 0 1.5rem}
+.types li{margin:.4rem 0}
+
+.strip{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.cell{width:2.5rem;height:2.5rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-variant-numeric:tabular-nums;cursor:pointer;font-weight:500}
+.cell.done{background:var(--accent-soft);color:var(--ink);border-color:transparent}
+.cell.current{border:2px solid var(--accent);color:var(--ink);font-weight:700}
+.cell:disabled{opacity:.4;cursor:default}
+
+.qhead{display:flex;align-items:baseline;gap:1rem;margin:0 0 .6rem}
+.qnum{font-family:'Noto Naskh Arabic',serif;font-size:3rem;line-height:1;color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+.instr{color:var(--muted);font-size:.92rem;margin:0;max-width:56ch}
+.qtext{font-family:'Noto Naskh Arabic',serif;font-size:1.32rem;line-height:2.1;margin:0 0 1.25rem;max-width:62ch}
+.qtext:focus,.stem:focus{outline:none}
+.stem{font-family:'Noto Naskh Arabic',serif;font-size:1.9rem;font-weight:700;margin:.25rem 0 1.25rem;letter-spacing:.01em}
+u.ce{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.35em;text-decoration-color:var(--accent);font-weight:600}
+.passage{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;margin:0 0 1.25rem;max-height:46vh;overflow-y:auto}
+.passage h3{margin:0 0 .4rem;font-size:.9rem;color:var(--muted);font-weight:600}
+.passage p{font-family:'Noto Naskh Arabic',serif;font-size:1.15rem;line-height:2.05;margin:0;max-width:62ch}
+
+.choices{display:grid;gap:.6rem;margin:0 0 1.5rem}
+.choice{display:grid;grid-template-columns:2.4rem 1fr;align-items:center;gap:.75rem;text-align:start;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;min-height:56px;font-size:1.12rem}
+.choice .ct{font-family:'Noto Naskh Arabic',serif;font-size:1.18rem}
+.choice .let{width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-weight:600;color:var(--muted)}
+.choice:hover{border-color:var(--accent)}
+.choice.on{border-color:var(--accent);background:var(--accent-soft)}
+.choice.on .let{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+.conf{border-top:1px solid var(--line);padding-top:1.1rem;margin:0 0 1rem}
+.conf p{margin:0 0 .6rem;font-weight:600}
+.cfrow{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.cf{border:1.5px solid var(--line);background:transparent;border-radius:10px;padding:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;min-height:48px;font-weight:500}
+.cf .mk{font-weight:700}
+.cf-sure.on{border-color:var(--sure);background:var(--accent-soft);color:var(--sure)}
+.cf-unsure.on{border-color:var(--unsure);background:var(--unsure-soft);color:var(--unsure)}
+.cf-guess.on{border-color:var(--guess);background:var(--guess-soft);color:var(--guess)}
+
+.note summary{cursor:pointer;color:var(--muted);font-size:.95rem;padding:.25rem 0}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.6rem 0}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:.35rem .85rem;font-size:.9rem;cursor:pointer}
+.chip.on{border-color:var(--accent);background:var(--accent-soft)}
+.note textarea,.raw textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;resize:vertical}
+
+.qnav{position:sticky;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 0 1rem;margin-top:.5rem}
+.hint{margin:0;color:var(--muted);font-size:.875rem;text-align:center;flex:1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.done p{max-width:60ch}
+.status{min-height:1.6em;color:var(--accent);font-weight:500;margin:.9rem 0 .5rem}
+.raw summary{cursor:pointer;color:var(--muted)}
+.raw textarea{margin-top:.6rem;font-size:.9rem}
+
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:1.5rem;width:min(440px,92vw)}
+dialog::backdrop{background:var(--backdrop)}
+dialog h2{font-family:'Noto Naskh Arabic',serif;margin:0 0 .5rem;font-size:1.4rem}
+dialog p{margin:0 0 1.25rem}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  main{padding:1rem .75rem 1.5rem}
+  .sheet{padding:1.25rem 1rem;border-radius:12px}
+  .qtext{font-size:1.2rem}
+  .qnum{font-size:2.4rem}
+  .stem{font-size:1.6rem}
+  .cf{font-size:.95rem}
+  .cell{width:2.3rem;height:2.3rem}
+  .passage{max-height:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .choice,.cf,.chip,.cell{transition:background-color .12s,border-color .12s}
+}
+</style>
+</head>
+<body>
+<header class="bar" id="bar"></header>
+<main id="app"></main>
+
+<dialog id="endDlg" aria-labelledby="endTitle">
+  <form method="dialog">
+    <h2 id="endTitle">إنهاء القسم؟</h2>
+    <p id="endMsg"></p>
+    <div class="actions">
+      <button class="primary" value="ok" id="endOk">إنهاء القسم</button>
+      <button class="ghost" value="cancel">الرجوع للمراجعة</button>
+    </div>
+  </form>
+</dialog>
+
+<noscript><main><div class="sheet"><p>هذا الاختبار يحتاج إلى تفعيل JavaScript في المتصفح.</p></div></main></noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Content ---------- */
+var KEY = 'qudurat-verbal-v1';
+var LETTERS = ['أ','ب','ج','د'];
+var CONF = [
+  {id:'sure',   label:'متأكدة',  mark:'✓'},
+  {id:'unsure', label:'متردّدة', mark:'؟'},
+  {id:'guess',  label:'خمّنت',   mark:'✗'}
+];
+var NOTE_CHIPS = ['لم أعرف معنى كلمة','لم أعرف العلاقة','احترت بين خيارين','لم يكفِ الوقت'];
+
+var INSTR = {
+  analogy: 'اختاري الزوج الذي بين كلمتيه علاقة مماثلة للعلاقة بين الكلمتين في السؤال، وبالترتيب نفسه.',
+  odd: 'اختاري الكلمة المختلفة عن بقية الكلمات.',
+  complete: 'اختاري ما يملأ الفراغ ليكتمل معنى الجملة.',
+  ce: 'اختاري الكلمة التي تحتها خط ولا يتفق معناها مع المعنى العام للجملة. الخطأ ليس إملائياً ولا نحوياً.',
+  read: 'اقرئي النص، ثم أجيبي عن السؤال.'
+};
+
+var TRAPS = {
+  topic:     'اختيار زوج من موضوع السؤال نفسه بعلاقة مختلفة',
+  reverse:   'عكس ترتيب العلاقة',
+  common:    'اختيار معلومة شائعة أو رأي يردّ عليه النص',
+  general:   'تعميم أوسع مما يقوله النص',
+  detail:    'اختيار تفصيل جزئي بدل الفكرة الرئيسة',
+  negation:  'عدم الانتباه لأداة النفي في السؤال',
+  connector: 'عدم الانتباه لأداة الربط أو لدليل في الجملة',
+  opposite:  'اختيار ما يعاكس فكرة النص'
+};
+
+var SECTIONS = [
+  {title:'القسم الأول', sub:'التناظر اللفظي والمفردة الشاذة', from:1, to:13, suggested:540,
+    types:['التناظر اللفظي: كلمتان بينهما علاقة، وتختارين زوجاً بين كلمتيه العلاقة نفسها وبالترتيب نفسه.','المفردة الشاذة: أربع كلمات، ثلاث منها يجمعها رابط، وتختارين المختلفة.']},
+  {title:'القسم الثاني', sub:'إكمال الجمل والخطأ السياقي', from:14, to:24, suggested:540,
+    types:['إكمال الجمل: تختارين الكلمة أو الكلمتين اللتين يكتمل بهما معنى الجملة.','الخطأ السياقي: في الجملة أربع كلمات تحتها خط، وتختارين الكلمة التي تخالف المعنى العام. الخطأ ليس إملائياً ولا نحوياً.']},
+  {title:'القسم الثالث', sub:'استيعاب المقروء', from:25, to:33, suggested:660,
+    types:['نصّان قصيران، ولكل نص عدة أسئلة. يمكنك الرجوع إلى النص في أي وقت.']}
+];
+
+var P1 = 'يظن كثير من الطلاب أن السهر ليلة الاختبار يمنحهم وقتاً إضافياً للمذاكرة، فتزيد فرصهم في النجاح. غير أن الدراسات الحديثة في علم الأعصاب تشير إلى عكس ذلك؛ فالدماغ لا يتوقف عن العمل أثناء النوم، بل ينشغل بترتيب المعلومات التي تلقّاها خلال اليوم، فيُثبّت المهم منها وينقله إلى الذاكرة طويلة المدى، ويتخلّص مما لا حاجة إليه. ولهذا فإن الطالب الذي يحرم نفسه من النوم يخسر أكثر مما يكسب؛ فهو يضيف ساعات إلى المذاكرة، لكنه يُفوّت المرحلة التي تتحول فيها هذه المذاكرة إلى معرفة ثابتة. يُضاف إلى ذلك أن قلة النوم تُضعف الانتباه وسرعة التفكير، وهما أشد ما يحتاج إليه الطالب في قاعة الاختبار.';
+var P2 = 'اشتهرت الإبل بقدرتها على تحمّل العطش، حتى شاع بين الناس أنها تخزّن الماء في سنامها. والحقيقة أن السنام مخزن للدهون لا للماء؛ إذ يستمد منه الجمل الطاقة حين يقلّ الطعام. أما سرّ صبره على العطش فيكمن في جسمه كله: فهو يفقد قليلاً من الماء في العرق والبول، وترتفع درجة حرارة جسمه نهاراً دون أن يتضرر، فيوفّر بذلك الماء الذي كان سيُفقد في تبريد الجسم. وإذا وجد الماء استطاع أن يشرب كمية كبيرة منه في دقائق معدودة.';
+
+var Q = [
+  /* Section 1: analogy */
+  {n:1, type:'analogy', skill:'التناظر اللفظي', sub:'الأداة ووظيفتها', stem:'مقص : قص',
+    choices:['مطرقة : مسمار','خيّاط : ثوب','قلم : كتابة','ورق : رسم'], ans:2,
+    diag:{0:'علاقة الأداة بما تعمل عليه، لا بوظيفتها', 1:'علاقة الصانع بما يصنعه', 3:'علاقة المادة بالنشاط'}, trap:{}},
+  {n:2, type:'analogy', skill:'التناظر اللفظي', sub:'الجزء والكل', stem:'غصن : شجرة',
+    choices:['ثمرة : بذرة','إصبع : يد','عش : طائر','جذر : تربة'], ans:1,
+    diag:{0:'العلاقة معكوسة: الكل ثم الجزء', 2:'علاقة المسكن بساكنه', 3:'زوج من موضوع النبات نفسه، لكن علاقته علاقة الشيء بمكانه'}, trap:{0:'reverse', 3:'topic'}},
+  {n:3, type:'analogy', skill:'التناظر اللفظي', sub:'الترادف', stem:'شجاع : جسور',
+    choices:['كريم : سخي','صادق : كاذب','سريع : عدّاء','ذكي : نجاح'], ans:0,
+    diag:{1:'علاقة تضاد لا ترادف', 2:'علاقة الصفة بصاحبها', 3:'علاقة الصفة بنتيجتها'}, trap:{}},
+  {n:4, type:'analogy', skill:'التناظر اللفظي', sub:'التضاد', stem:'ظلام : نور',
+    choices:['ليل : قمر','شمس : حرارة','برد : شتاء','صمت : ضجيج'], ans:3,
+    diag:{0:'زوج من موضوع الليل والضوء نفسه، لكن علاقته مختلفة', 1:'علاقة السبب بالنتيجة', 2:'علاقة الصفة بوقتها'}, trap:{0:'topic'}},
+  {n:5, type:'analogy', skill:'التناظر اللفظي', sub:'السبب والنتيجة', stem:'إهمال : رسوب',
+    choices:['اجتهاد : تفوّق','رسوب : إهمال','نجاح : مدرسة','مرض : طبيب'], ans:0,
+    diag:{1:'العلاقة معكوسة: النتيجة ثم السبب', 2:'علاقة الشيء بمكانه', 3:'علاقة المشكلة بمن يعالجها'}, trap:{1:'reverse'}},
+  {n:6, type:'analogy', skill:'التناظر اللفظي', sub:'النوع والفئة', stem:'نسر : طائر',
+    choices:['جناح : طائر','قطة : فأر','تفاح : فاكهة','نخلة : تمر'], ans:2,
+    diag:{0:'زوج من موضوع الطيور نفسه، لكن علاقته الجزء بالكل', 1:'علاقة المفترس بفريسته', 3:'علاقة النبات بثمره'}, trap:{0:'topic'}},
+  {n:7, type:'analogy', skill:'التناظر اللفظي', sub:'التدرّج في الشدة', stem:'دافئ : حار',
+    choices:['بارد : ساخن','ابتسامة : قهقهة','ماء : بخار','صيف : شتاء'], ans:1,
+    diag:{0:'زوج من موضوع الحرارة نفسه، لكن علاقته تضاد لا تدرّج', 2:'علاقة تحوّل الحالة', 3:'علاقة تضاد'}, trap:{0:'topic'}},
+  {n:8, type:'analogy', skill:'التناظر اللفظي', sub:'الشخص ومكان عمله', stem:'طبيب : مستشفى',
+    choices:['طالب : كتاب','خبّاز : خبز','مريض : دواء','معلم : مدرسة'], ans:3,
+    diag:{0:'علاقة الشخص بأداته', 1:'علاقة الصانع بما يصنعه', 2:'زوج من موضوع الطب نفسه، لكن علاقته مختلفة'}, trap:{2:'topic'}},
+  {n:9, type:'analogy', skill:'التناظر اللفظي', sub:'المادة الخام والمنتج', stem:'قطن : قميص',
+    choices:['نجار : باب','خشب : كرسي','قميص : زر','ماء : عطش'], ans:1,
+    diag:{0:'علاقة الصانع بما يصنعه، لا المادة بما يُصنع منها', 2:'زوج من موضوع الملابس نفسه، لكن علاقته الكل بالجزء', 3:'علاقة الشيء بما يزيله'}, trap:{2:'topic'}},
+  {n:10, type:'analogy', skill:'التناظر اللفظي', sub:'الشيء وصفته الملازمة', stem:'ثلج : بارد',
+    choices:['عسل : حلو','نار : رماد','بحر : سفينة','شجرة : ظل'], ans:0,
+    diag:{1:'علاقة الشيء بما يتبقى منه', 2:'علاقة المكان بما فيه', 3:'علاقة الشيء بما ينتج عنه'}, trap:{}},
+  /* Section 1: odd one out */
+  {n:11, type:'odd', skill:'المفردة الشاذة', sub:'صفة أساسية', text:'أيّ الكلمات الآتية مختلفة عن البقية؟',
+    choices:['مثلث','مربع','دائرة','مستطيل'], ans:2, diag:{}, trap:{}},
+  {n:12, type:'odd', skill:'المفردة الشاذة', sub:'صفة أساسية', text:'أيّ الكلمات الآتية مختلفة عن البقية؟',
+    choices:['جبل','وادٍ','تل','هضبة'], ans:1, diag:{}, trap:{}},
+  {n:13, type:'odd', skill:'المفردة الشاذة', sub:'صفة ثانوية دقيقة', text:'أيّ الكلمات الآتية مختلفة عن البقية؟',
+    choices:['موز','خوخ','مشمش','كرز'], ans:0, diag:{}, trap:{}},
+
+  /* Section 2: sentence completion */
+  {n:14, type:'complete', skill:'إكمال الجمل', sub:'منطق الجملة', text:'كلما زادت معرفة الإنسان، أدرك أن ما يجهله .......... مما يعرفه.',
+    choices:['أقل','أسهل','أكثر','أقدم'], ans:2, diag:{0:'كلمة تناسب اللغة لكنها تعكس منطق الجملة'}, trap:{0:'opposite'}},
+  {n:15, type:'complete', skill:'إكمال الجمل', sub:'أداة الربط «رغم»', text:'رغم صعوبة الطريق وطوله، لم يتوقف المتسابق لحظة، بل واصل سيره بـ.......... حتى بلغ خط النهاية.',
+    choices:['تردّد','إصرار','بطء','خوف'], ans:1, diag:{0:'«لم يتوقف لحظة» دليل على الإصرار', 2:'«لم يتوقف لحظة» دليل على الإصرار', 3:'«لم يتوقف لحظة» دليل على الإصرار'}, trap:{0:'connector', 2:'connector', 3:'connector'}},
+  {n:16, type:'complete', skill:'إكمال الجمل', sub:'أسلوب «لا يكفي... بل»', text:'لا يكفي أن تكون الفكرة .......... ، بل يجب أن تكون .......... للتطبيق.',
+    choices:['قديمة / صعبة','غامضة / بعيدة','سهلة / مستحيلة','جميلة / قابلة'], ans:3,
+    diag:{0:'لا يستقيم بهما أسلوب «لا يكفي... بل»', 1:'لا يستقيم بهما أسلوب «لا يكفي... بل»', 2:'لا يستقيم بهما أسلوب «لا يكفي... بل»'}, trap:{0:'connector', 1:'connector', 2:'connector'}},
+  {n:17, type:'complete', skill:'إكمال الجمل', sub:'التعليل', text:'يُعدّ الماء عنصراً .......... للحياة، فلا يستطيع كائن حي أن يعيش بدونه.',
+    choices:['ضرورياً','ثانوياً','نادراً','مضرّاً'], ans:0, diag:{1:'الجملة الثانية تعلّل الأولى: لا حياة بدونه، فهو ضروري'}, trap:{1:'connector'}},
+  {n:18, type:'complete', skill:'إكمال الجمل', sub:'أداة الربط «لكن»', text:'كان الجو في الصباح .......... ، لكنه أصبح في المساء .......... فاضطررنا إلى ارتداء المعاطف.',
+    choices:['بارداً / حاراً','ممطراً / ممطراً','معتدلاً / بارداً','حاراً / مشمساً'], ans:2,
+    diag:{0:'ترتيب معكوس: المعاطف تدل على برودة المساء', 1:'«لكن» تدل على تغيّر الجو', 3:'المعاطف لا تناسب جواً حاراً مشمساً'}, trap:{0:'connector', 1:'connector', 3:'connector'}},
+  /* Section 2: contextual error */
+  {n:19, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع النتيجة', sentence:'حرص الطالب على [مراجعة] دروسه [يومياً]، فكانت نتيجته [ضعيفة] في نهاية [العام].', ans:2, diag:{}, trap:{}},
+  {n:20, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع الفكرة العامة', sentence:'[الصبر] مفتاح الفرج، ولذلك [يندم] الصابرون على [انتظارهم] في [النهاية].', ans:1, diag:{}, trap:{}},
+  {n:21, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع النتيجة', sentence:'تعاون أفراد الفريق [فتعثّروا] في [إنجاز] المشروع، وأنهوه في وقت [أقصر] مما [توقّعوا].', ans:0, diag:{}, trap:{}},
+  {n:22, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع الفكرة العامة', sentence:'يُعدّ [النوم] الكافي سبباً في [ضعف] التركيز و[تحسّن] [المزاج].', ans:1, diag:{}, trap:{}},
+  {n:23, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع النتيجة', sentence:'لما اشتدّ [المطر] [امتلأت] الشوارع بالماء، فاضطر الناس إلى [البقاء] في [الحدائق].', ans:3, diag:{}, trap:{}},
+  {n:24, type:'ce', skill:'الخطأ السياقي', sub:'تناقض مع الفكرة العامة', sentence:'القراءة [غذاء] العقل، فهي [توسّع] المدارك و[تُضيّق] [آفاق] التفكير.', ans:2, diag:{}, trap:{}},
+
+  /* Section 3: reading */
+  {n:25, type:'read', passage:1, skill:'استيعاب المقروء', sub:'الفكرة الرئيسة', text:'ما الفكرة الرئيسة للنص؟',
+    choices:['السهر ليلة الاختبار يزيد فرص النجاح','الدماغ يتخلّص من المعلومات غير المهمة','النوم مرحلة ضرورية لتثبيت ما يتعلمه الطالب','علم الأعصاب من أحدث العلوم'], ans:2,
+    diag:{0:'هذا الرأي يذكره النص ليردّ عليه', 1:'تفصيل جزئي، لا الفكرة الرئيسة', 3:'فكرة لم يتناولها النص'}, trap:{0:'common', 1:'detail'}},
+  {n:26, type:'read', passage:1, skill:'استيعاب المقروء', sub:'التفاصيل', text:'بحسب النص، ماذا يفعل الدماغ أثناء النوم؟',
+    choices:['يتوقف عن العمل ليستريح','يرتّب المعلومات ويثبّت المهم منها','يحذف كل ما تعلّمه خلال اليوم','يزيد سرعة التفكير'], ans:1,
+    diag:{0:'النص ينفي ذلك صراحة', 2:'النص يذكر التخلّص مما لا حاجة إليه فقط، لا كل شيء', 3:'خلط بين تفاصيل النص'}, trap:{0:'common', 2:'general'}},
+  {n:27, type:'read', passage:1, skill:'استيعاب المقروء', sub:'الاستنتاج', text:'يُفهم من النص أن الطالب الذي يسهر ليلة الاختبار:',
+    choices:['لا يستفيد من أي ساعة ذاكرها','يحصل على درجة أعلى من زملائه','لا يحتاج إلى المراجعة في الصباح','يذاكر وقتاً أطول لكنه يرسّخ معلومات أقل'], ans:3,
+    diag:{0:'تعميم لا يقوله النص', 1:'عكس ما يُفهم من النص'}, trap:{0:'general', 1:'opposite'}},
+  {n:28, type:'read', passage:1, skill:'استيعاب المقروء', sub:'معنى الكلمة في السياق', text:'المقصود بالفعل «يُثبّت» في النص:',
+    choices:['يجعل المعلومة راسخة يصعب نسيانها','يكتب المعلومة','يكرّر المعلومة بصوت عالٍ','يُبطئ التفكير'], ans:0, diag:{}, trap:{}},
+  {n:29, type:'read', passage:1, skill:'استيعاب المقروء', sub:'العنوان', text:'أنسب عنوان للنص:',
+    choices:['فوائد السهر للطلاب','تاريخ علم الأعصاب','النوم جزء من المذاكرة','كيف تختار موعد الاختبار'], ans:2,
+    diag:{0:'عكس فكرة النص', 1:'أوسع من النص ولم يتناوله'}, trap:{0:'opposite'}},
+  {n:30, type:'read', passage:2, skill:'استيعاب المقروء', sub:'التفاصيل', text:'بحسب النص، ماذا يخزّن الجمل في سنامه؟',
+    choices:['الماء','الملح','الهواء','الدهون'], ans:3, diag:{0:'المعلومة الشائعة التي ينفيها النص'}, trap:{0:'common'}},
+  {n:31, type:'read', passage:2, skill:'استيعاب المقروء', sub:'الاستنتاج', text:'يُفهم من النص أن ارتفاع حرارة جسم الجمل نهاراً:',
+    choices:['علامة على مرضه','يساعده على توفير الماء','يجعله يشرب أكثر','يحدث في الشتاء فقط'], ans:1,
+    diag:{0:'النص يذكر أنه لا يتضرر', 2:'عكس ما يُفهم من النص'}, trap:{2:'opposite'}},
+  {n:32, type:'read', passage:2, skill:'استيعاب المقروء', sub:'غرض الكاتب', text:'ما الغرض الأساسي للكاتب؟',
+    choices:['تصحيح معلومة شائعة عن الإبل وبيان سرّ تحمّلها العطش','الدعوة إلى تربية الإبل','وصف أنواع الإبل في الجزيرة العربية','المقارنة بين الإبل والخيل'], ans:0, diag:{}, trap:{}},
+  {n:33, type:'read', passage:2, skill:'استيعاب المقروء', sub:'ما لم يذكره النص', text:'أيّ مما يأتي لم يذكره النص؟',
+    choices:['قلة ما يفقده الجمل من الماء في العرق','تحمّل جسمه لارتفاع حرارته','قدرته على شرب كمية كبيرة في وقت قصير','حصوله على الماء من النباتات الصحراوية'], ans:3,
+    diag:{0:'هذه المعلومة مذكورة؛ السؤال عمّا لم يُذكر', 1:'هذه المعلومة مذكورة؛ السؤال عمّا لم يُذكر', 2:'هذه المعلومة مذكورة؛ السؤال عمّا لم يُذكر'}, trap:{0:'negation', 1:'negation', 2:'negation'}}
+];
+var byN = {};
+Q.forEach(function(q){
+  if (q.type === 'ce') {
+    q.choices = [];
+    q.html = q.sentence.replace(/\[([^\]]+)\]/g, function(_, w){ q.choices.push(w); return '<u class="ce">' + w + '</u>'; });
+  }
+  byN[q.n] = q;
+});
+
+/* ---------- State ---------- */
+var store = {
+  get: function(){ try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; } },
+  set: function(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} },
+  clear: function(){ try { localStorage.removeItem(KEY); } catch(e){} }
+};
+if (/[?&]reset\b/.test(location.search)) {
+  store.clear();
+  try { history.replaceState(null, '', location.pathname); } catch(e){}
+}
+function fresh(){
+  return {v:1, screen:'welcome', sec:0, cur:1, reached:[0,0,0], ans:{}, secTime:[0,0,0], qTime:{}, startedAt:null, finishedAt:null};
+}
+var S = store.get();
+if (!S || S.v !== 1) S = fresh();
+var resumePrompt = (S.screen === 'question' || S.screen === 'secIntro');
+var ui = {noteOpen:{}, lastQ:null};
+
+var app = document.getElementById('app');
+var bar = document.getElementById('bar');
+var dlg = document.getElementById('endDlg');
+
+function save(){ store.set(S); }
+function A(n){ if (!S.ans[n]) S.ans[n] = {c:null, f:null, note:''}; return S.ans[n]; }
+function complete(n){ var a = S.ans[n]; return !!(a && a.c !== null && a.f !== null); }
+function p2(x){ return (x < 10 ? '0' : '') + x; }
+function fmt(ms){ var t = Math.round(ms/1000); return Math.floor(t/60) + ':' + p2(t % 60); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function noteParts(note){ return note.split('،').map(function(x){ return x.trim(); }).filter(Boolean); }
+function inQuestion(){ return S.screen === 'question' && !resumePrompt; }
+
+/* ---------- Rendering ---------- */
+function renderHeader(){
+  if (inQuestion()) {
+    var sec = SECTIONS[S.sec];
+    var pos = S.cur - sec.from + 1, total = sec.to - sec.from + 1;
+    var over = S.secTime[S.sec] > sec.suggested * 1000;
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>' + sec.title + ': ' + sec.sub + '</strong><span>السؤال ' + pos + ' من ' + total + '</span></div>' +
+      '<div class="clock' + (over ? ' over' : '') + '" id="clock" role="timer" aria-label="الوقت المستغرق في هذا القسم">' +
+      '<span id="clockVal">' + fmt(S.secTime[S.sec]) + '</span><small>الوقت المقترح ' + fmt(sec.suggested * 1000) + '</small></div></div>';
+  } else {
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>اختبار تحديد المستوى</strong><span>القدرات العامة، القسم اللفظي</span></div></div>';
+  }
+}
+
+function renderWelcome(){
+  var buttons = resumePrompt
+    ? '<button class="primary" data-action="resume">متابعة الاختبار</button><button class="ghost" data-action="restart">البدء من جديد</button>'
+    : '<button class="primary" data-action="start">ابدئي الاختبار</button>';
+  return '<section class="sheet intro">' +
+    '<h1>اختبار تحديد المستوى: القسم اللفظي</h1>' +
+    '<p class="lede">القسم اللفظي أكثر من نصف درجة القدرات. هذا الاختبار يحدد أيّ أنواع أسئلته تحتاجين التركيز عليها، فلا تقلقي من الخطأ.</p>' +
+    '<ul class="rules">' +
+      '<li>33 سؤالاً في ثلاثة أقسام. بعد إنهاء أي قسم لا يمكن الرجوع إليه.</li>' +
+      '<li>قبل كل قسم شرح قصير لأنواع أسئلته، وفوق كل سؤال تذكير بالمطلوب.</li>' +
+      '<li>يظهر في الأعلى وقت القسم والوقت المقترح له. إن تجاوزتِه أكملي بهدوء.</li>' +
+      '<li>مع كل إجابة اختاري مدى ثقتك بها: متأكدة، أو متردّدة، أو خمّنت.</li>' +
+      '<li>إذا توقفتِ عند سؤال، أضيفي ملاحظة قصيرة عن السبب، مثل كلمة لم تعرفي معناها.</li>' +
+      '<li>يُحفظ تقدّمك تلقائياً على هذا الجهاز، فإذا أُغلقت الصفحة تتابعين من حيث توقفتِ.</li>' +
+    '</ul>' +
+    '<div class="actions">' + buttons + '</div></section>';
+}
+
+function renderSecIntro(){
+  var s = SECTIONS[S.sec];
+  return '<section class="sheet secintro"><p class="step">القسم ' + (S.sec + 1) + ' من ' + SECTIONS.length + '</p>' +
+    '<h1>' + s.sub + '</h1>' +
+    '<p>الأسئلة من ' + s.from + ' إلى ' + s.to + '. الوقت المقترح ' + (s.suggested / 60) + ' دقيقة.</p>' +
+    '<ul class="types">' + s.types.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ul>' +
+    '<div class="actions"><button class="primary" data-action="begin">ابدئي القسم</button></div></section>';
+}
+
+function questionBody(q){
+  if (q.type === 'analogy') return '<div class="stem" id="qtext" tabindex="-1">' + q.stem + '</div>';
+  if (q.type === 'ce') return '<p class="qtext" id="qtext" tabindex="-1">' + q.html + '</p>';
+  if (q.type === 'read') {
+    return '<div class="passage" tabindex="0" aria-label="النص ' + (q.passage === 1 ? 'الأول' : 'الثاني') + '"><h3>النص ' + (q.passage === 1 ? 'الأول' : 'الثاني') + '</h3><p>' + (q.passage === 1 ? P1 : P2) + '</p></div>' +
+      '<p class="qtext" id="qtext" tabindex="-1">' + q.text + '</p>';
+  }
+  return '<p class="qtext" id="qtext" tabindex="-1">' + q.text + '</p>';
+}
+
+function renderQuestion(){
+  var sec = SECTIONS[S.sec], q = byN[S.cur], a = A(S.cur);
+  var n, strip = '';
+  for (n = sec.from; n <= sec.to; n++) {
+    var locked = n > S.reached[S.sec];
+    var cls = 'cell' + (n === S.cur ? ' current' : '') + (complete(n) ? ' done' : '');
+    strip += '<button class="' + cls + '" data-action="go" data-n="' + n + '"' + (locked ? ' disabled' : '') +
+      ' aria-label="السؤال ' + n + (complete(n) ? '، تمت الإجابة' : '') + '"' + (n === S.cur ? ' aria-current="step"' : '') + '>' + n + '</button>';
+  }
+  var choices = q.choices.map(function(c, i){
+    var on = a.c === i;
+    return '<button class="choice' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-action="choose" data-i="' + i + '">' +
+      '<span class="let">' + LETTERS[i] + '</span><span class="ct">' + c + '</span></button>';
+  }).join('');
+  var conf = CONF.map(function(c){
+    var on = a.f === c.id;
+    return '<button class="cf cf-' + c.id + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-action="conf" data-f="' + c.id + '">' +
+      '<span class="mk" aria-hidden="true">' + c.mark + '</span>' + c.label + '</button>';
+  }).join('');
+  var parts = noteParts(a.note);
+  var chips = NOTE_CHIPS.map(function(t){
+    var on = parts.indexOf(t) !== -1;
+    return '<button class="chip' + (on ? ' on' : '') + '" data-action="chip" data-t="' + esc(t) + '" aria-pressed="' + on + '">' + t + '</button>';
+  }).join('');
+  var open = a.note || ui.noteOpen[S.cur];
+  var ok = complete(S.cur);
+  var lastInSec = S.cur === sec.to;
+  var lastSec = S.sec === SECTIONS.length - 1;
+  var nextLabel = lastInSec ? (lastSec ? 'إنهاء الاختبار' : 'إنهاء القسم') : 'التالي';
+
+  return '<nav class="strip" aria-label="أسئلة القسم">' + strip + '</nav>' +
+    '<article class="sheet q">' +
+      '<div class="qhead"><div class="qnum" aria-hidden="true">' + q.n + '</div><p class="instr">' + INSTR[q.type] + '</p></div>' +
+      questionBody(q) +
+      '<div class="choices" role="radiogroup" aria-label="الخيارات">' + choices + '</div>' +
+      '<div class="conf"><p id="confLbl">كم أنتِ متأكدة من إجابتك؟</p><div class="cfrow" role="radiogroup" aria-labelledby="confLbl">' + conf + '</div></div>' +
+      '<details class="note"' + (open ? ' open' : '') + '><summary>واجهتِ صعوبة في هذا السؤال؟ أضيفي ملاحظة</summary>' +
+        '<div class="chips">' + chips + '</div>' +
+        '<label class="sr" for="note">ملاحظة عن السؤال</label>' +
+        '<textarea id="note" rows="2" placeholder="مثلاً: الكلمة التي لم تعرفي معناها (اختياري)">' + esc(a.note) + '</textarea>' +
+      '</details>' +
+    '</article>' +
+    '<div class="qnav">' +
+      '<button class="ghost" data-action="prev"' + (S.cur === sec.from ? ' disabled' : '') + '>السابق</button>' +
+      '<p class="hint" aria-live="polite">' + (ok ? '' : 'اختاري إجابة ومدى ثقتك للمتابعة') + '</p>' +
+      '<button class="primary" data-action="next"' + (ok ? '' : ' disabled') + '>' + nextLabel + '</button>' +
+    '</div>';
+}
+
+function renderDone(){
+  var total = S.secTime.reduce(function(x, y){ return x + y; }, 0);
+  var canShare = typeof navigator.share === 'function';
+  return '<section class="sheet done">' +
+    '<h1>انتهى الاختبار</h1>' +
+    '<p>أحسنتِ. استغرق الحل ' + fmt(total) + ' دقيقة.</p>' +
+    '<p>الخطوة الأخيرة: أرسلي النتيجة لمن أعطاكِ رابط الاختبار.</p>' +
+    '<div class="actions">' +
+      (canShare ? '<button class="primary" data-action="share">إرسال النتيجة</button>' : '') +
+      '<button class="' + (canShare ? 'ghost' : 'primary') + '" data-action="copy">نسخ النتيجة</button>' +
+      '<button class="ghost" data-action="download">تنزيل ملف النتيجة</button>' +
+    '</div>' +
+    '<p class="status" id="status" aria-live="polite"></p>' +
+    '<details class="raw"><summary>عرض نص النتيجة</summary><textarea id="rep" readonly rows="12">' + esc(report()) + '</textarea></details>' +
+    '</section>';
+}
+
+function render(){
+  renderHeader();
+  var html;
+  if (resumePrompt || S.screen === 'welcome') html = renderWelcome();
+  else if (S.screen === 'secIntro') html = renderSecIntro();
+  else if (S.screen === 'question') html = renderQuestion();
+  else html = renderDone();
+  app.innerHTML = html;
+  if (inQuestion()) {
+    if (ui.lastQ !== S.cur) {
+      ui.lastQ = S.cur;
+      window.scrollTo(0, 0);
+      var t = document.getElementById('qtext');
+      if (t) t.focus({preventScroll:true});
+    }
+  } else {
+    ui.lastQ = null;
+  }
+}
+function refocus(sel){ var el = app.querySelector(sel); if (el) el.focus(); }
+
+/* ---------- Report ---------- */
+function isRight(q){ var a = S.ans[q.n]; return !!(a && a.c === q.ans); }
+
+function report(){
+  var L = [];
+  var d = new Date(S.finishedAt || Date.now());
+  var stamp = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  var score = Q.filter(isRight).length;
+  var total = S.secTime.reduce(function(x, y){ return x + y; }, 0);
+
+  L.push('نتيجة اختبار تحديد المستوى: القدرات العامة، القسم اللفظي');
+  L.push('تاريخ الإنهاء: ' + stamp);
+  L.push('');
+  L.push('الدرجة: ' + score + ' من ' + Q.length);
+  L.push('الوقت الكلي: ' + fmt(total));
+  L.push('');
+  L.push('الأقسام:');
+  SECTIONS.forEach(function(s, i){
+    var c = 0;
+    for (var n = s.from; n <= s.to; n++) if (isRight(byN[n])) c++;
+    L.push('- ' + s.sub + ': ' + c + ' من ' + (s.to - s.from + 1) + '، الوقت ' + fmt(S.secTime[i]) + ' (المقترح ' + fmt(s.suggested * 1000) + ')');
+  });
+  L.push('');
+
+  var sk = {}, order = [];
+  Q.forEach(function(q){
+    if (!sk[q.skill]) { sk[q.skill] = {r:0, t:0, miss:[]}; order.push(q.skill); }
+    sk[q.skill].t++;
+    if (isRight(q)) sk[q.skill].r++; else sk[q.skill].miss.push('س' + q.n + ' ' + q.sub);
+  });
+  order.sort(function(x, y){ return (sk[x].r / sk[x].t) - (sk[y].r / sk[y].t); });
+  L.push('حسب نوع السؤال (الأضعف أولاً):');
+  order.forEach(function(k){
+    L.push('- ' + k + ': ' + sk[k].r + ' من ' + sk[k].t + (sk[k].miss.length ? ' | أخطأت في: ' + sk[k].miss.join('، ') : ''));
+  });
+  L.push('');
+
+  var traps = {};
+  Q.forEach(function(q){
+    var a = S.ans[q.n];
+    if (!a || a.c === null || a.c === q.ans) return;
+    var t = q.trap && q.trap[a.c];
+    if (t) { if (!traps[t]) traps[t] = []; traps[t].push('س' + q.n); }
+  });
+  var tk = Object.keys(traps).sort(function(x, y){ return traps[y].length - traps[x].length; });
+  L.push('أنماط الأخطاء المتكررة:');
+  if (!tk.length) L.push('- لا يوجد نمط واضح');
+  tk.forEach(function(t){ L.push('- ' + TRAPS[t] + ': ' + traps[t].length + ' (' + traps[t].join('، ') + ')'); });
+  L.push('');
+
+  var m = {sure:[0,0], unsure:[0,0], guess:[0,0]}, wrongSure = [], rightGuess = [];
+  Q.forEach(function(q){
+    var a = S.ans[q.n];
+    if (!a || !a.f) return;
+    var r = isRight(q);
+    m[a.f][r ? 0 : 1]++;
+    if (!r && a.f === 'sure') wrongSure.push('س' + q.n);
+    if (r && a.f === 'guess') rightGuess.push('س' + q.n);
+  });
+  L.push('الثقة مقابل الصحة:');
+  CONF.forEach(function(c){ L.push('- ' + c.label + ': ' + m[c.id][0] + ' صحيحة، ' + m[c.id][1] + ' خاطئة'); });
+  L.push('- خاطئة مع ثقة (فهم خاطئ محتمل): ' + (wrongSure.join('، ') || 'لا يوجد'));
+  L.push('- صحيحة بالتخمين (معرفة غير ثابتة): ' + (rightGuess.join('، ') || 'لا يوجد'));
+  L.push('');
+
+  L.push('تفصيل الأسئلة:');
+  Q.forEach(function(q){
+    var a = S.ans[q.n] || {c:null, f:null, note:''};
+    var r = isRight(q);
+    var pick = a.c === null ? 'بلا إجابة' : (r ? LETTERS[a.c] : LETTERS[a.c] + ' «' + q.choices[a.c] + '» (الصحيح ' + LETTERS[q.ans] + ' «' + q.choices[q.ans] + '»)');
+    var cf = '';
+    CONF.forEach(function(c){ if (c.id === a.f) cf = c.label; });
+    L.push('س' + q.n + ' | ' + q.skill + ': ' + q.sub + ' | ' + pick + ' | ' + (r ? 'صحيحة' : 'خاطئة') + ' | ' + (cf || 'بلا ثقة') + ' | ' + fmt(S.qTime[q.n] || 0));
+    if (!r && a.c !== null && q.diag && q.diag[a.c]) L.push('    خطأ محتمل: ' + q.diag[a.c]);
+    if (a.note && a.note.trim()) L.push('    ملاحظتها: ' + a.note.trim());
+  });
+  return L.join('\n');
+}
+
+/* ---------- Actions ---------- */
+function status(msg){ var el = document.getElementById('status'); if (el) el.textContent = msg; }
+function copyText(text){
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).then(function(){ return true; }, function(){ return legacyCopy(text); });
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+function legacyCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){}
+  ta.remove();
+  return ok;
+}
+
+function openEnd(){
+  var s = SECTIONS[S.sec];
+  var isLast = S.sec === SECTIONS.length - 1;
+  var msg = isLast ? 'هذا آخر قسم. بعد إنهائه ينتهي الاختبار ولا يمكن تعديل الإجابات.' : 'بعد إنهاء ' + s.title + ' لا يمكنك الرجوع إليه أو تعديل إجاباته.';
+  document.getElementById('endTitle').textContent = isLast ? 'إنهاء الاختبار؟' : 'إنهاء القسم؟';
+  document.getElementById('endMsg').textContent = msg;
+  document.getElementById('endOk').textContent = isLast ? 'إنهاء الاختبار' : 'إنهاء القسم';
+  if (dlg && typeof dlg.showModal === 'function') {
+    dlg.returnValue = '';
+    dlg.showModal();
+  } else if (window.confirm(msg)) {
+    endSection();
+  }
+}
+if (dlg) dlg.addEventListener('close', function(){ if (dlg.returnValue === 'ok') endSection(); });
+
+function endSection(){
+  if (S.sec < SECTIONS.length - 1) { S.sec++; S.screen = 'secIntro'; }
+  else { S.finishedAt = Date.now(); S.screen = 'done'; }
+  save(); render(); window.scrollTo(0, 0);
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-action]');
+  if (!b || b.disabled) return;
+  var act = b.dataset.action, sec = SECTIONS[S.sec], a;
+  switch (act) {
+    case 'start':
+      S = fresh(); S.startedAt = Date.now(); S.screen = 'secIntro';
+      save(); render(); break;
+    case 'resume':
+      resumePrompt = false; render(); break;
+    case 'restart':
+      if (window.confirm('سيُحذف كل ما أجبتِ عنه وتبدئين من جديد. هل أنتِ متأكدة؟')) {
+        S = fresh(); resumePrompt = false; ui.noteOpen = {}; ui.lastQ = null; save(); render();
+      }
+      break;
+    case 'begin':
+      S.cur = sec.from; S.reached[S.sec] = Math.max(S.reached[S.sec], sec.from); S.screen = 'question';
+      save(); render(); break;
+    case 'choose':
+      A(S.cur).c = +b.dataset.i; save(); render();
+      refocus('[data-action="choose"][data-i="' + b.dataset.i + '"]'); break;
+    case 'conf':
+      A(S.cur).f = b.dataset.f; save(); render();
+      refocus('[data-action="conf"][data-f="' + b.dataset.f + '"]'); break;
+    case 'chip':
+      a = A(S.cur);
+      var t = b.dataset.t, parts = noteParts(a.note);
+      parts = parts.indexOf(t) !== -1 ? parts.filter(function(x){ return x !== t; }) : parts.concat(t);
+      a.note = parts.join('، '); ui.noteOpen[S.cur] = true; save(); render();
+      refocus('[data-action="chip"][data-t="' + t + '"]'); break;
+    case 'go':
+      S.cur = +b.dataset.n; save(); render(); break;
+    case 'prev':
+      if (S.cur > sec.from) { S.cur--; save(); render(); }
+      break;
+    case 'next':
+      if (!complete(S.cur)) return;
+      if (S.cur < sec.to) { S.cur++; S.reached[S.sec] = Math.max(S.reached[S.sec], S.cur); save(); render(); }
+      else openEnd();
+      break;
+    case 'share':
+      navigator.share({title:'نتيجة اختبار القدرات اللفظي', text:report()})
+        .then(function(){ status('تمت المشاركة.'); })
+        .catch(function(err){ if (!err || err.name !== 'AbortError') status('تعذّرت المشاركة. استخدمي زر نسخ النتيجة.'); });
+      break;
+    case 'copy':
+      copyText(report()).then(function(ok){
+        status(ok ? 'تم نسخ النتيجة. الصقيها في رسالة وأرسليها.' : 'لم يتم النسخ تلقائياً. افتحي «عرض نص النتيجة» وانسخيه يدوياً.');
+      });
+      break;
+    case 'download':
+      var blob = new Blob(['\ufeff' + report()], {type:'text/plain;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url; link.download = 'qudurat-verbal-result.txt';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      status('تم تنزيل ملف النتيجة.');
+      break;
+  }
+});
+
+app.addEventListener('input', function(e){
+  if (e.target.id === 'note') { A(S.cur).note = e.target.value; save(); }
+});
+app.addEventListener('toggle', function(e){
+  if (e.target.classList && e.target.classList.contains('note')) ui.noteOpen[S.cur] = e.target.open;
+}, true);
+
+/* ---------- Timer: counts only while a question is on screen and the tab is visible ---------- */
+var lastTick = Date.now();
+setInterval(function(){
+  var now = Date.now(), d = now - lastTick;
+  lastTick = now;
+  if (d > 5000) d = 1000;
+  if (inQuestion() && !document.hidden) {
+    S.secTime[S.sec] += d;
+    S.qTime[S.cur] = (S.qTime[S.cur] || 0) + d;
+    var v = document.getElementById('clockVal');
+    if (v) v.textContent = fmt(S.secTime[S.sec]);
+    var c = document.getElementById('clock');
+    if (c) c.classList.toggle('over', S.secTime[S.sec] > SECTIONS[S.sec].suggested * 1000);
+    save();
+  }
+}, 1000);
+document.addEventListener('visibilitychange', function(){ lastTick = Date.now(); });
+
+render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التدريب الموجّه | القدرات العامة، القسم الكمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#EEF2F0; --surface:#FFFFFF; --ink:#16302B; --muted:#5B6E69; --line:#D3DDD9;
+  --accent:#0E6B5A; --accent-ink:#FFFFFF; --accent-soft:#DCEFEA;
+  --sure:#0E6B5A; --unsure:#9A5F08; --unsure-soft:#F6EBD6; --guess:#A2414B; --guess-soft:#F5E1E3;
+  --backdrop:rgba(10,20,18,.45);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#0F1715; --surface:#16211E; --ink:#E3ECE9; --muted:#9AADA8; --line:#2A3A36;
+    --accent:#4CC0A6; --accent-ink:#06231D; --accent-soft:#183A33;
+    --sure:#4CC0A6; --unsure:#E3A94A; --unsure-soft:#3A2E17; --guess:#E8848F; --guess-soft:#3B1E22;
+    --backdrop:rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,'Geeza Pro',sans-serif;font-size:17px;line-height:1.7}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:760px;margin:0 auto;padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.where{display:flex;flex-direction:column;line-height:1.35}
+.where strong{font-weight:600;font-size:1rem}
+.where span{color:var(--muted);font-size:.875rem}
+.linkbtn{background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;padding:.4rem .2rem;min-height:44px}
+
+main{max-width:760px;margin:0 auto;padding:1.25rem 1.25rem 2rem}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.75rem 1.5rem}
+.sheet + .sheet{margin-top:1rem}
+h1{font-family:'Noto Naskh Arabic',serif;font-weight:700;font-size:2rem;line-height:1.45;margin:0 0 .6rem}
+h2{font-family:'Noto Naskh Arabic',serif;font-weight:700;font-size:1.35rem;line-height:1.5;margin:0 0 .6rem}
+.lede{font-size:1.1rem;margin:0 0 1rem;max-width:60ch}
+p{max-width:62ch}
+.muted{color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.primary,.ghost{border-radius:999px;padding:.6rem 1.4rem;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);min-height:48px}
+.primary{background:var(--accent);color:var(--accent-ink)}
+.ghost{background:transparent;color:var(--accent)}
+.primary:disabled,.ghost:disabled{opacity:.4;cursor:not-allowed}
+
+/* Home */
+.modlist{list-style:none;margin:1.25rem 0 0;padding:0;border-top:1px solid var(--line)}
+.modlist li{display:grid;grid-template-columns:2.6rem 1fr auto;gap:1rem;align-items:center;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+.modnum{font-family:'Noto Naskh Arabic',serif;font-size:1.9rem;font-weight:700;color:var(--accent);line-height:1;text-align:center}
+.modlist h2{font-size:1.2rem;margin:0}
+.modlist p{margin:.1rem 0 0;font-size:.92rem}
+.modstatus{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+.modstatus.done{color:var(--accent);font-weight:600}
+
+/* Module */
+.keyq{border-inline-start:4px solid var(--accent);padding:.4rem 1rem;margin:0 0 1.25rem;background:var(--accent-soft);border-radius:0 8px 8px 0;font-weight:500}
+.phase{display:flex;justify-content:space-between;gap:1rem;color:var(--muted);font-size:.9rem;margin:0 0 .4rem}
+.track{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin:0 0 1rem}
+.track i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.steptext,.qtext{font-family:'Noto Naskh Arabic',serif;font-size:1.28rem;line-height:2;margin:0 0 1.25rem;max-width:62ch}
+.steptext:focus,.qtext:focus{outline:none}
+.qnum{font-family:'Noto Naskh Arabic',serif;font-size:2.8rem;line-height:1;color:var(--accent);font-weight:700;margin:0 0 .5rem}
+
+.numrow{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:0 0 1rem}
+.numrow label{font-weight:600}
+.numrow input{width:9rem;font-size:1.25rem;padding:.5rem .8rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);text-align:center;font-variant-numeric:tabular-nums}
+.numrow input:focus{border-color:var(--accent);outline:none}
+.numrow input:disabled{opacity:.7}
+
+.fb{border-radius:10px;padding:.8rem 1rem;margin:0 0 1rem;line-height:1.85}
+.fb-ok{background:var(--accent-soft)}
+.fb-bad{background:var(--guess-soft)}
+.fb-reveal{background:var(--unsure-soft)}
+.fb .hintline{display:block;margin-top:.3rem;color:var(--muted)}
+.fb .keyline{display:block;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--line);color:var(--muted)}
+
+.rulebox textarea{width:100%;min-height:6rem;font-size:1.05rem;padding:.7rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);resize:vertical;line-height:1.8}
+.rulebox textarea:focus{border-color:var(--accent);outline:none}
+.model{border:1.5px dashed var(--accent);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.model b{display:block;color:var(--accent);margin-bottom:.2rem}
+
+.choices{display:grid;gap:.6rem;margin:0 0 1.25rem}
+.choice{display:grid;grid-template-columns:2.4rem 1fr;align-items:center;gap:.75rem;text-align:start;padding:.55rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;min-height:54px;font-size:1.08rem}
+.choice .let{width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-weight:600;color:var(--muted)}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice.on{border-color:var(--accent);background:var(--accent-soft)}
+.choice.on .let{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.choice.right{border-color:var(--sure);background:var(--accent-soft)}
+.choice.right .let{background:var(--sure);border-color:var(--sure);color:var(--accent-ink)}
+.choice.wrong{border-color:var(--guess);background:var(--guess-soft)}
+.choice.wrong .let{background:var(--guess);border-color:var(--guess);color:#fff}
+.choice:disabled{cursor:default}
+.choice.dim{opacity:.55}
+
+.cmp{margin:0 0 1.25rem}
+.given{margin:0 0 .75rem;font-size:1.1rem}
+.given span{color:var(--muted)}
+.cmpgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.cmpgrid div{border:1px dashed var(--line);border-radius:10px;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.3rem}
+.cmpgrid span{color:var(--muted);font-size:.875rem}
+.cmpgrid b{font-family:'Noto Naskh Arabic',serif;font-size:1.35rem;font-weight:600}
+
+.conf{border-top:1px solid var(--line);padding-top:1.1rem;margin:0 0 1rem}
+.conf p{margin:0 0 .6rem;font-weight:600}
+.cfrow{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.cf{border:1.5px solid var(--line);background:transparent;border-radius:10px;padding:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;min-height:48px;font-weight:500}
+.cf .mk{font-weight:700}
+.cf:disabled{cursor:default}
+.cf-sure.on{border-color:var(--sure);background:var(--accent-soft);color:var(--sure)}
+.cf-unsure.on{border-color:var(--unsure);background:var(--unsure-soft);color:var(--unsure)}
+.cf-guess.on{border-color:var(--guess);background:var(--guess-soft);color:var(--guess)}
+.keybox{background:var(--unsure-soft);border-radius:10px;padding:.7rem 1rem;margin:0 0 1rem}
+.keybox b{color:var(--unsure)}
+
+.stepnav{position:sticky;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 0 1rem;margin-top:.5rem}
+.stepnav .hint{margin:0;color:var(--muted);font-size:.875rem;text-align:center;flex:1}
+
+.rulelist{list-style:none;padding:0;margin:0 0 1.5rem;display:grid;gap:1rem}
+.rulelist li{border-bottom:1px solid var(--line);padding-bottom:1rem}
+.rulelist h3{font-size:1rem;margin:0 0 .3rem;color:var(--accent)}
+.rulelist .hers{margin:0 0 .4rem}
+.rulelist .hers span,.rulelist .ours span{color:var(--muted);font-size:.875rem;display:block}
+.rulelist .ours{margin:0}
+.score{font-family:'Noto Naskh Arabic',serif;font-size:2.6rem;font-weight:700;color:var(--accent);line-height:1.2;margin:0}
+.status{min-height:1.6em;color:var(--accent);font-weight:500;margin:.8rem 0 .4rem}
+.raw summary{cursor:pointer;color:var(--muted)}
+.raw textarea{width:100%;margin-top:.6rem;font-size:.9rem;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.7rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  main{padding:1rem .75rem 1.5rem}
+  .sheet{padding:1.25rem 1rem;border-radius:12px}
+  .steptext,.qtext{font-size:1.17rem}
+  .qnum{font-size:2.3rem}
+  .cmpgrid{grid-template-columns:1fr}
+  .modlist li{grid-template-columns:2rem 1fr;}
+  .modlist li .primary,.modlist li .ghost{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:no-preference){
+  .choice,.cf,.track i{transition:background-color .12s,border-color .12s,width .25s}
+}
+</style>
+</head>
+<body>
+<header class="bar" id="bar"></header>
+<main id="app"></main>
+<noscript><main><div class="sheet"><p>هذه الصفحة تحتاج إلى تفعيل JavaScript في المتصفح.</p></div></main></noscript>
+
+<script>
+(function(){
+'use strict';
+
+const LETTERS = ['أ','ب','ج','د'];
+const CONF = [
+  {id:'sure', label:'متأكدة', mark:'✓'},
+  {id:'unsure', label:'متردّدة', mark:'؟'},
+  {id:'guess', label:'خمّنت', mark:'✗'}
+];
+const CMP_CHOICES = ['القيمة الأولى أكبر','القيمة الثانية أكبر','القيمتان متساويتان','المعطيات غير كافية للمقارنة'];
+const NEG = n => '<bdi dir="ltr">−' + n + '</bdi>';
+
+/* =====================================================================
+   Content. Discovery steps: type num (typed answer), mc (pick), rule (she writes the rule).
+   Practice questions: exam style, with the guiding question (key) as the hint.
+   ===================================================================== */
+const MODULES = [
+{
+  id:'avg', title:'المتوسط والوسيط',
+  blurb:'متوسط الدرجات، إضافة عدد أو حذفه، متوسط السرعة، والوسيط.',
+  key:'هل يتعلّق السؤال بالمجموع أم بالترتيب؟',
+  disc:[
+    {type:'num', label:'حساب المتوسط',
+      text:'في اختبار القدرات، كلمة «المتوسط» وحدها تعني المتوسط الحسابي: نجمع القيم ثم نقسم على عددها.<br>حصلت نورة على الدرجات 7 و9 و8. ما متوسط درجاتها؟',
+      ans:8, ok:'(7 + 9 + 8) ÷ 3 = 24 ÷ 3 = 8.', hint:'اجمعي الدرجات الثلاث، ثم اقسمي الناتج على 3.', wrong:{}},
+    {type:'num', label:'المجموع من المتوسط',
+      text:'متوسط 5 أعداد يساوي 12. ما مجموع هذه الأعداد الخمسة؟',
+      ans:60, ok:'المتوسط يعني: لو وُزّع المجموع بالتساوي لأخذ كل عدد 12. إذن المجموع = 12 × 5 = 60.',
+      hint:'تخيّلي أن الأعداد الخمسة متساوية، وكل واحد منها 12. كم مجموعها؟',
+      wrong:{'12':'12 هو المتوسط نفسه. السؤال عن مجموع الأعداد الخمسة.', '2.4':'قسمتِ 12 على 5. لكن المتوسط هو ناتج القسمة، فالمجموع أكبر منه.'}},
+    {type:'num', label:'إضافة عدد',
+      text:'متوسط 4 أعداد يساوي 10. أُضيف إليها عدد خامس فأصبح المتوسط 11. ما العدد المضاف؟',
+      ans:15, ok:'المجموع قبل الإضافة 10 × 4 = 40، وبعدها 11 × 5 = 55. العدد المضاف هو الفرق: 55 − 40 = 15.',
+      hint:'احسبي المجموع قبل الإضافة (4 أعداد) والمجموع بعدها (5 أعداد)، ثم الفرق بينهما.',
+      wrong:{'11':'هذا افتراض أن العدد المضاف يساوي المتوسط الجديد. قارني المجموعين بدلاً من ذلك.', '1':'الفرق بين المتوسطين 1، لكن العدد المضاف رفع متوسط خمسة أعداد. فكّري في المجاميع.'}},
+    {type:'rule', label:'قاعدة المتوسط',
+      text:'اكتبي بكلماتك: إذا عرفتِ متوسط مجموعة من الأعداد وعددها، كيف تجدين مجموعها؟ ومتى يفيدك ذلك؟',
+      model:'المجموع = المتوسط × العدد. في أي سؤال عن المتوسط أحوّل المتوسط إلى مجموع أولاً، ثم أتعامل مع المجاميع: أضيف، أو أطرح، أو أقارن.'},
+    {type:'num', label:'متوسط السرعة',
+      text:'قطعت سيارة 60 كم في ساعة واحدة (سرعتها 60 كم/ساعة)، ثم قطعت 60 كم أخرى في ساعتين (سرعتها 30 كم/ساعة). ما متوسط سرعتها في الرحلة كلها بالكيلومتر في الساعة؟',
+      ans:40, ok:'المسافة الكلية 120 كم، والزمن الكلي 3 ساعات، فمتوسط السرعة 120 ÷ 3 = 40. إنها فكرة المجموع نفسها: مجموع المسافات ÷ مجموع الأزمنة.',
+      hint:'لا تأخذي متوسط السرعتين. احسبي المسافة الكلية والزمن الكلي.',
+      wrong:{'45':'45 هو متوسط السرعتين 60 و30. لكن السيارة قضت وقتاً أطول بالسرعة البطيئة، فلا يصح أخذ متوسطهما مباشرة.'}},
+    {type:'num', label:'الوسيط (عدد فردي من القيم)',
+      text:'الوسيط هو العدد الذي يقع في المنتصف بعد ترتيب الأعداد.<br>رتّبي الأعداد 9، 6، 2، 11، 4 من الأصغر إلى الأكبر. ما العدد الذي في المنتصف؟',
+      ans:6, ok:'بعد الترتيب: 2، 4، 6، 9، 11، والعدد الأوسط 6.',
+      hint:'رتّبي أولاً، ثم عدّي من الطرفين حتى تلتقي في المنتصف.',
+      wrong:{'2':'2 هو العدد الأوسط قبل الترتيب. رتّبي الأعداد أولاً.', '6.4':'هذا المتوسط الحسابي (32 ÷ 5). الوسيط لا يحتاج إلى جمع، بل إلى ترتيب فقط.'}},
+    {type:'num', label:'الوسيط (عدد زوجي من القيم)',
+      text:'الآن الأعداد 10، 3، 8، 4. عددها زوجي، فبعد الترتيب يقع في المنتصف عددان. ما العدد الذي يقع في منتصف المسافة بينهما تماماً؟',
+      ans:6, ok:'بعد الترتيب: 3، 4، 8، 10. العددان الأوسطان 4 و8، ومنتصف المسافة بينهما (4 + 8) ÷ 2 = 6.',
+      hint:'رتّبي الأعداد، ثم اجمعي العددين الأوسطين واقسمي على 2.',
+      wrong:{'4':'4 أحد العددين الأوسطين فقط. الوسيط منتصف المسافة بين 4 و8.', '8':'8 أحد العددين الأوسطين فقط. الوسيط منتصف المسافة بين 4 و8.', '6.25':'هذا المتوسط الحسابي (25 ÷ 4)، لا الوسيط.', '5.5':'أخذتِ العددين الأوسطين قبل الترتيب.'}},
+    {type:'rule', label:'قاعدة الوسيط',
+      text:'اكتبي بكلماتك: كيف تجدين الوسيط؟ وما الفرق بينه وبين المتوسط؟',
+      model:'أرتّب الأعداد، ثم آخذ العدد الأوسط. إذا كان عددها زوجياً آخذ متوسط العددين الأوسطين. المتوسط يعتمد على مجموع الأعداد، أما الوسيط فيعتمد على ترتيبها فقط.'}
+  ],
+  prac:[
+    {text:'متوسط درجات 6 طالبات 80. خرجت منهن طالبة درجتها 70. ما متوسط درجات الطالبات الباقيات؟',
+      choices:['80','84','82','81'], ans:2, key:'حوّلي المتوسط إلى مجموع: كم مجموع الدرجات قبل خروجها؟',
+      exp:'المجموع 80 × 6 = 480. بعد خروجها: 480 − 70 = 410 لخمس طالبات، فالمتوسط 410 ÷ 5 = 82.', wrongs:{}},
+    {text:'ما الوسيط للأعداد: 12، 5، 20، 9، 7 ؟',
+      choices:['20','10.6','12','9'], ans:3, key:'هل يتعلّق الوسيط بالمجموع أم بالترتيب؟',
+      exp:'بعد الترتيب: 5، 7، 9، 12، 20. العدد الأوسط 9.',
+      wrongs:{0:'20 هو العدد الأوسط قبل الترتيب. رتّبي أولاً.', 1:'10.6 هو المتوسط الحسابي (53 ÷ 5)، لا الوسيط.'}},
+    {text:'قطعت دراجة 30 كم بسرعة 10 كم/ساعة، ثم 30 كم أخرى بسرعة 15 كم/ساعة. ما متوسط سرعتها في الرحلة كلها (كم/ساعة)؟',
+      choices:['12.5','13','12','25'], ans:2, key:'ما المسافة الكلية؟ وما الزمن الكلي؟',
+      exp:'زمن الجزء الأول 30 ÷ 10 = 3 ساعات، وزمن الجزء الثاني 30 ÷ 15 = 2، أي ساعتان. المسافة الكلية 60 كم والزمن 5 ساعات، فالمتوسط 60 ÷ 5 = 12.',
+      wrongs:{0:'12.5 هو متوسط السرعتين. الدراجة قضت وقتاً أطول بالسرعة البطيئة.', 3:'25 مجموع السرعتين، وليس متوسطاً.'}},
+    {text:'متوسط ثلاثة أعداد 20، ومتوسط عددين آخرين 30. ما متوسط الأعداد الخمسة معاً؟',
+      choices:['25','24','26','50'], ans:1, key:'لا تأخذي متوسط المتوسطين. ما مجموع كل مجموعة؟',
+      exp:'مجموع الأولى 20 × 3 = 60، ومجموع الثانية 30 × 2 = 60. المجموع الكلي 120 لخمسة أعداد، فالمتوسط 120 ÷ 5 = 24.',
+      wrongs:{0:'25 متوسط المتوسطين. لكن عدد القيم في المجموعتين مختلف، فلا يصح ذلك.', 3:'50 مجموع المتوسطين.'}},
+    {text:'إذا كان متوسط الأعداد س، 8، 13 يساوي 10، فما قيمة س؟',
+      choices:['10','30','9','11'], ans:2, key:'كم يجب أن يكون مجموع الأعداد الثلاثة؟',
+      exp:'المجموع = 10 × 3 = 30. إذن س = 30 − 8 − 13 = 9.', wrongs:{1:'30 هو مجموع الأعداد الثلاثة، لا قيمة س.'}},
+    {text:'ما الوسيط للأعداد: 4، 9، 1، 7، 3، 10 ؟',
+      choices:['4','7','6','5.5'], ans:3, key:'عدد القيم زوجي. ماذا تفعلين بالعددين الأوسطين؟',
+      exp:'بعد الترتيب: 1، 3، 4، 7، 9، 10. العددان الأوسطان 4 و7، والوسيط (4 + 7) ÷ 2 = 5.5.',
+      wrongs:{0:'4 أحد العددين الأوسطين فقط. الوسيط منتصف المسافة بين 4 و7.', 1:'7 أحد العددين الأوسطين فقط. الوسيط منتصف المسافة بين 4 و7.'}},
+    {text:'متوسط أعمار 4 أخوات الآن 15 سنة. ما متوسط أعمارهن بعد 3 سنوات؟',
+      choices:['18','15','27','21'], ans:0, key:'كم سيزيد مجموع الأعمار بعد 3 سنوات؟',
+      exp:'كل أخت يزيد عمرها 3 سنوات، فيزيد المجموع 4 × 3 = 12، من 60 إلى 72. المتوسط 72 ÷ 4 = 18. إذا زاد كل عدد بالمقدار نفسه، زاد المتوسط بالمقدار نفسه.',
+      wrongs:{2:'27 = 15 + 12: أضفتِ زيادة المجموع كاملة إلى المتوسط، لكنها تتوزّع على 4 أخوات.'}},
+    {text:'مجموعة من 7 أعداد مختلفة. أُضيف 100 إلى أكبر عدد فيها. أيّ مما يأتي لا يتغيّر؟',
+      choices:['المتوسط','المجموع','الوسيط','الفرق بين أكبر عدد وأصغر عدد'], ans:2, key:'أيّها يعتمد على المجموع، وأيّها يعتمد على الترتيب فقط؟',
+      exp:'أكبر عدد يبقى في آخر الترتيب، فالعدد الأوسط لا يتغيّر، ويبقى الوسيط كما هو. أما المتوسط والمجموع والفرق فكلها تزيد.',
+      wrongs:{0:'المتوسط يعتمد على المجموع، والمجموع زاد 100.'}}
+  ]
+},
+{
+  id:'pct', title:'النسبة المئوية والتناسب',
+  blurb:'نسبة التغيّر، النسب المتتالية، التناسب الطردي والعكسي، وأجزاء النسبة.',
+  key:'النسبة من أي شيء؟ وهل يجب أن يكبر الجواب أم يصغر؟',
+  disc:[
+    {type:'num', label:'زيادة مئوية',
+      text:'سعر قميص 100 ريال، ثم ارتفع بنسبة 20%. كم ريالاً أصبح سعره؟',
+      ans:120, ok:'20% من 100 تساوي 20، فأصبح السعر 120.', hint:'20% من 100 تعني 20 من كل 100.',
+      wrong:{'20':'20 هو مقدار الزيادة. السؤال عن السعر الجديد.'}},
+    {type:'num', label:'نسبة من سعر جديد',
+      text:'ثم انخفض السعر الجديد (120 ريالاً) بنسبة 20%. كم ريالاً انخفض؟',
+      ans:24, ok:'20% من 120 = 0.2 × 120 = 24.', hint:'الانخفاض 20% من 120، لا من 100. و10% من 120 تساوي 12.',
+      wrong:{'20':'هذه 20% من 100. لكن الانخفاض حُسب من السعر الجديد 120.'}},
+    {type:'num', label:'زيادة ثم نقص',
+      text:'كم أصبح السعر الآن؟',
+      ans:96, ok:'ارتفع 20 ريالاً ثم انخفض 24، فأصبح 96. الزيادة والنقص بالنسبة نفسها لا يلغيان بعضهما، لأن كل نسبة حُسبت من أساس مختلف.',
+      hint:'120 − 24', wrong:{'100':'كانت الزيادة 20 والنقص 24، فلم يرجع السعر إلى 100.'}},
+    {type:'num', label:'نسبة التغيّر',
+      text:'زاد عدد زوار متجر من 40 زائراً إلى 50 زائراً. الزيادة 10 زوار. ما نسبة الزيادة المئوية؟ (اكتبي الرقم فقط)',
+      ans:25, ok:'الزيادة 10 من أصل 40 (القيمة الأصلية): 10 ÷ 40 = 0.25 = 25%.',
+      hint:'الزيادة 10 من أصل كم؟ النسبة تؤخذ من القيمة قبل التغيّر.',
+      wrong:{'20':'قسمتِ على العدد الجديد 50. نسبة التغيّر تؤخذ دائماً من القيمة الأصلية: 10 ÷ 40.', '10':'10 هو مقدار الزيادة بالعدد، لا بالنسبة المئوية. 10 من أصل كم؟'}},
+    {type:'rule', label:'قاعدة نسبة التغيّر',
+      text:'اكتبي بكلماتك: كيف تحسبين نسبة الزيادة أو النقص؟ ومن أي قيمة تؤخذ النسبة؟',
+      model:'نسبة التغيّر = مقدار التغيّر ÷ القيمة الأصلية × 100. كل نسبة تؤخذ من القيمة التي قبلها مباشرة. وإذا لم يُذكر سعر، أبدأ بـ 100 لأرى ما يحدث.'},
+    {type:'mc', label:'اتجاه التناسب',
+      text:'يبني 3 عمّال سوراً في 8 أيام. لو أصبح عدد العمّال 6، هل يحتاجون أياماً أكثر أم أقل؟',
+      choices:['أكثر','أقل','العدد نفسه'], ans:1,
+      ok:'عمّال أكثر ← أيام أقل. عندما يكبر أحد المقدارين ويصغر الآخر، فالتناسب عكسي.',
+      wrongs:{0:'فكّري في الواقع: هل يتأخر العمل إذا زاد عدد من يعملون؟', 2:'عمّال أكثر يعني إنجازاً أسرع.'}},
+    {type:'num', label:'التناسب العكسي',
+      text:'كم يوماً يحتاج 6 عمّال لبناء السور نفسه؟ فكّري: العمل كله يساوي 3 عمّال × 8 أيام = 24 «يوم عمل».',
+      ans:4, ok:'24 يوم عمل ÷ 6 عمّال = 4 أيام. في التناسب العكسي يبقى حاصل الضرب ثابتاً.',
+      hint:'العمل كله 24 يوم عمل، يتوزّع على 6 عمّال.',
+      wrong:{'16':'هذا تناسب طردي: ضاعفتِ الأيام مع مضاعفة العمّال. لكن عمّال أكثر يعني أياماً أقل.'}},
+    {type:'num', label:'التناسب الطردي',
+      text:'تقطع سيارة 150 كم بـ 10 لترات من الوقود. كم لتراً تحتاج لقطع 450 كم؟ (مسافة أكثر ← وقود أكثر أم أقل؟)',
+      ans:30, ok:'المسافة تضاعفت 3 مرات، فالوقود يتضاعف 3 مرات: 10 × 3 = 30. في التناسب الطردي تبقى القسمة ثابتة: 15 كم لكل لتر.',
+      hint:'450 كم تساوي كم مرة من 150 كم؟', wrong:{}},
+    {type:'rule', label:'طردي أم عكسي',
+      text:'اكتبي بكلماتك: كيف تعرفين قبل الحساب أن التناسب طردي أو عكسي؟',
+      model:'أسأل: إذا زاد المقدار الأول، هل يزيد الثاني أم ينقص؟ إذا زادا معاً فالتناسب طردي (القسمة ثابتة). إذا زاد أحدهما ونقص الآخر فهو عكسي (الضرب ثابت، مثل: عمّال × أيام = العمل كله).'},
+    {type:'num', label:'أجزاء النسبة',
+      text:'النسبة بين عدد الأولاد وعدد البنات في عائلة 2 : 3، وعدد البنات 6. كم عدد الأبناء والبنات معاً؟ (البنات 3 أجزاء تساوي 6، فكم الجزء الواحد؟)',
+      ans:10, ok:'الجزء الواحد = 6 ÷ 3 = 2، فالأولاد 2 × 2 = 4، والمجموع 4 + 6 = 10. أو مباشرة: المجموع 5 أجزاء × 2 = 10.',
+      hint:'الجزء الواحد يساوي 2. الأولاد جزءان، والمجموع 5 أجزاء.',
+      wrong:{'4':'4 هو عدد الأولاد فقط. السؤال عن العدد كله.'}}
+  ],
+  prac:[
+    {text:'انخفض سعر جوال بنسبة 25% فأصبح 1500 ريال. ما سعره قبل التخفيض؟',
+      choices:['1875','2000','1800','1125'], ans:1, key:'1500 ريال تمثّل كم بالمئة من السعر الأصلي؟',
+      exp:'بعد خصم 25% يبقى 75% من السعر الأصلي. 75% = 1500، فـ 25% = 500، والسعر الأصلي (100%) = 2000.',
+      wrongs:{0:'1875 = 1500 + 25% من 1500. لكن الـ 25% كانت من السعر الأصلي لا من السعر الجديد.', 3:'1125 هو 75% من 1500: خصمتِ مرة ثانية بدل الرجوع إلى السعر الأصلي.'}},
+    {text:'ارتفع عدد طالبات مدرسة من 500 إلى 600. ما نسبة الزيادة؟',
+      choices:['100%','16.7% تقريباً','120%','20%'], ans:3, key:'الزيادة 100 طالبة من أصل كم؟',
+      exp:'الزيادة 100 من أصل 500 (القيمة الأصلية): 100 ÷ 500 = 20%.',
+      wrongs:{0:'100 مقدار الزيادة بالعدد، لا بالنسبة المئوية.', 1:'قسمتِ على العدد الجديد 600. النسبة تؤخذ من القيمة الأصلية.', 2:'600 تساوي 120% من 500، لكن الزيادة وحدها 20%.'}},
+    {text:'ارتفع سعر سلعة بنسبة 10%، ثم ارتفع السعر الجديد مرة أخرى بنسبة 10%. ما نسبة الزيادة الكلية؟',
+      choices:['20%','11%','21%','22%'], ans:2, key:'ابدئي بسعر 100. كم يصبح بعد الزيادة الأولى؟ ثم بعد الثانية؟',
+      exp:'100 ← 110 ← 110 + 11 = 121. الزيادة الكلية 21 من 100، أي 21%.',
+      wrongs:{0:'الزيادة الثانية 10% من 110 لا من 100، فهي 11 لا 10.'}},
+    {text:'يقطع قطار مسافة في 6 ساعات بسرعة 80 كم/ساعة. كم ساعة يحتاج لقطع المسافة نفسها بسرعة 120 كم/ساعة؟',
+      choices:['4','9','5','3'], ans:0, key:'سرعة أكبر ← زمن أكثر أم أقل؟',
+      exp:'المسافة 80 × 6 = 480 كم. بسرعة 120: 480 ÷ 120 = 4 ساعات. السرعة والزمن تناسبهما عكسي.',
+      wrongs:{1:'9 ساعات تعني أن القطار الأسرع يتأخر! هذا تناسب طردي في مكان التناسب العكسي.'}},
+    {text:'النسبة بين ما ادّخرته سارة وما ادّخرته منى 4 : 7. إذا ادّخرت منى 63 ريالاً، فكم ادّخرتا معاً؟',
+      choices:['36','110','99','77'], ans:2, key:'منى 7 أجزاء تساوي 63 ريالاً. كم الجزء الواحد؟',
+      exp:'الجزء الواحد 63 ÷ 7 = 9. المجموع 11 جزءاً × 9 = 99 ريالاً.',
+      wrongs:{0:'36 ما ادّخرته سارة فقط. السؤال عن المجموع.'}},
+    {text:'ما 15% من 40% من العدد 200؟',
+      choices:['30','12','110','6'], ans:1, key:'ابدئي من الداخل: كم 40% من 200؟',
+      exp:'40% من 200 = 80، ثم 15% من 80 = 12.',
+      wrongs:{0:'30 هي 15% من 200، وأهملتِ الـ 40%.', 2:'110 هي 55% من 200: جمعتِ النسبتين. لكن النسبة الثانية تؤخذ من ناتج الأولى.'}},
+    {text:'ثمن 8 أقلام 12 ريالاً. كم قلماً يمكن شراؤها بـ 45 ريالاً؟',
+      choices:['30','24','36','32'], ans:0, key:'مال أكثر ← أقلام أكثر أم أقل؟ وكم ثمن القلم الواحد؟',
+      exp:'ثمن القلم 12 ÷ 8 = 1.5 ريال. إذن 45 ÷ 1.5 = 30 قلماً.', wrongs:{}},
+    {text:'خُلط 3 لترات من العصير مع لترين من الماء. ما النسبة المئوية للعصير في الخليط؟',
+      choices:['150%','60%','40%','30%'], ans:1, key:'العصير جزء من أي شيء؟ ما الكمية الكلية؟',
+      exp:'الخليط كله 3 + 2 = 5 لترات، والعصير 3 منها: 3 ÷ 5 = 60%.',
+      wrongs:{0:'150% = 3 ÷ 2: قسمتِ العصير على الماء، لا على الخليط كله.', 2:'40% نسبة الماء، لا العصير.'}}
+  ]
+},
+{
+  id:'geo', title:'الهندسة بالتفكير',
+  blurb:'زوايا المثلث والمضلعات، فيثاغورس، الدائرة، ومساحة أوجه المجسمات.',
+  key:'ارسمي الشكل، واكتبي عليه كل ما تعرفينه، ثم ابحثي عن مثلث.',
+  disc:[
+    {type:'num', label:'مجموع زوايا المثلث',
+      text:'لو قصصتِ زوايا أي مثلث الثلاث ووضعتِها متجاورة، فإنها تكوّن خطاً مستقيماً، والخط المستقيم زاويته 180°. لذلك مجموع زوايا أي مثلث 180°.<br>مثلث فيه زاويتان قياسهما 50° و70°. كم قياس الزاوية الثالثة؟',
+      ans:60, ok:'180 − 50 − 70 = 60.', hint:'180 − (50 + 70)',
+      wrong:{'240':'استخدمتِ 360°. مجموع زوايا المثلث 180° فقط؛ الـ 360° هي الدورة الكاملة.'}},
+    {type:'num', label:'زوايا الرباعي',
+      text:'أي شكل رباعي يمكن تقسيمه بقطر واحد إلى مثلثين. كم مجموع زوايا الشكل الرباعي؟',
+      ans:360, ok:'مثلثان × 180° = 360°.', hint:'كم مثلثاً؟ وكم مجموع زوايا كل مثلث؟', wrong:{}},
+    {type:'num', label:'تقسيم المضلّع',
+      text:'ارسمي شكلاً سداسياً، واختاري رأساً واحداً، وارسمي منه خطوطاً إلى كل الرؤوس غير المجاورة له. كم مثلثاً تكوّن؟',
+      ans:4, ok:'الرباعي ← مثلثان، والخماسي ← 3 مثلثات، والسداسي ← 4 مثلثات. عدد المثلثات دائماً = عدد الأضلاع − 2.',
+      hint:'من رأس واحد في السداسي تخرج 3 خطوط.',
+      wrong:{'6':'لو رسمتِ من مركز الشكل لحصلتِ على 6 مثلثات، لكن زواياها عند المركز ليست من زوايا الشكل. ارسمي الخطوط من رأس واحد.'}},
+    {type:'num', label:'زاوية مضلّع منتظم',
+      text:'إذن مجموع زوايا السداسي = 4 × 180° = 720°. إذا كان السداسي منتظماً (زواياه الست متساوية)، فكم قياس الزاوية الواحدة؟',
+      ans:120, ok:'720 ÷ 6 = 120°.', hint:'اقسمي المجموع على عدد الزوايا.', wrong:{}},
+    {type:'rule', label:'قاعدة زوايا المضلّع',
+      text:'اكتبي بكلماتك: كيف تجدين مجموع زوايا أي مضلّع دون حفظ قانون؟',
+      model:'أقسّمه من رأس واحد إلى مثلثات. عدد المثلثات = عدد الأضلاع − 2، وكل مثلث 180°. إذن المجموع = (عدد الأضلاع − 2) × 180°. وإذا كان منتظماً أقسم المجموع على عدد الزوايا.'},
+    {type:'mc', label:'أطوال أضلاع المثلث',
+      text:'مثلث طولا ضلعين فيه 6 سم و8 سم. أيّ مما يأتي لا يمكن أن يكون طول ضلعه الثالث؟',
+      choices:['10 سم','13 سم','3 سم','14 سم'], ans:3,
+      ok:'لو كان الضلع الثالث 14 لانطبق الضلعان 6 و8 عليه تماماً ولم يتكوّن مثلث. أطول ضلع في أي مثلث أقصر من مجموع الضلعين الآخرين.',
+      wrongs:{0:'10 ممكن: 6 + 8 = 14 أكبر من 10.', 1:'13 ممكن: 6 + 8 = 14 أكبر من 13.', 2:'3 ممكن: 3 + 6 = 9 أكبر من 8.'}},
+    {type:'num', label:'فيثاغورس',
+      text:'في المثلث القائم الزاوية: مربع الوتر (أطول ضلع، ويقابل الزاوية القائمة) = مجموع مربعي الضلعين الآخرين.<br>ضلعا الزاوية القائمة 6 سم و8 سم: 6² + 8² = 36 + 64 = 100. كم طول الوتر؟',
+      ans:10, ok:'الجذر التربيعي لـ 100 هو 10. تتكرر في القدرات أطوال جاهزة: (3، 4، 5) ومضاعفاتها مثل (6، 8، 10)، و(5، 12، 13). إذا رأيتِ ضلعين منها فالثالث معروف.',
+      hint:'ما العدد الذي إذا ضُرب في نفسه أعطى 100؟',
+      wrong:{'14':'14 = 6 + 8، وقد رأيتِ أن هذا مستحيل في أي مثلث.', '100':'100 هو مربع الوتر. خذي الجذر التربيعي.'}},
+    {type:'num', label:'نصف قطر الدائرة',
+      text:'قانونا الدائرة يعتمدان على نصف القطر (نق): المحيط = 2 × π × نق، والمساحة = π × نق².<br>دائرة محيطها 14π سم. كم نصف قطرها؟',
+      ans:7, ok:'2 × π × نق = 14π، إذن نق = 7، ومساحتها π × 7² = 49π. القاعدة: أوجدي نصف القطر أولاً دائماً.',
+      hint:'2 × نق = 14', wrong:{'14':'14 هو القطر (2 × نق). نصف القطر نصفه.'}},
+    {type:'num', label:'مساحة أوجه المكعب',
+      text:'مكعب طول حرفه 3 سم. له 6 أوجه، وكل وجه مربع. كم مجموع مساحات أوجهه الستة بالسنتيمتر المربع؟',
+      ans:54, ok:'مساحة الوجه 3 × 3 = 9، والأوجه 6، فالمجموع 54. لم نحتج إلى قانون، فقط عددنا الأوجه.',
+      hint:'مساحة الوجه الواحد 9.', wrong:{'27':'27 هو الحجم (3 × 3 × 3)، لا مساحة الأوجه.', '9':'9 مساحة وجه واحد فقط. كم وجهاً للمكعب؟'}},
+    {type:'rule', label:'الدائرة والمجسّمات',
+      text:'اكتبي بكلماتك: ماذا تفعلين أولاً في أي سؤال عن دائرة؟ وكيف تحسبين مجموع مساحات أوجه مجسّم دون قانون؟',
+      model:'في الدائرة أوجد نصف القطر أولاً، ثم أطبّق القانون المطلوب. في المجسّم أعدّ الأوجه، وأحسب مساحة كل وجه، ثم أجمعها: المكعب 6 مربعات متساوية، ومتوازي المستطيلات 3 أزواج من المستطيلات.'}
+  ],
+  prac:[
+    {text:'مثلث متطابق الضلعين، قياس زاوية رأسه 40°. ما قياس كل من زاويتي القاعدة؟',
+      choices:['140°','70°','40°','50°'], ans:1, key:'مجموع الزوايا 180°، وزاويتا القاعدة متساويتان.',
+      exp:'180 − 40 = 140 لزاويتي القاعدة معاً، فكل واحدة 70°.', wrongs:{0:'140° مجموع زاويتي القاعدة معاً. اقسميه على 2.'}},
+    {text:'ما مجموع قياسات الزوايا الداخلية لمضلّع ثماني (8 أضلاع)؟',
+      choices:['1440°','1260°','1080°','900°'], ans:2, key:'كم مثلثاً يتكوّن إذا قسّمتِه من رأس واحد؟',
+      exp:'عدد المثلثات 8 − 2 = 6، والمجموع 6 × 180° = 1080°.', wrongs:{0:'1440 = 8 × 180: عدد المثلثات أقل من عدد الأضلاع باثنين.'}},
+    {text:'مضلّع مجموع زواياه الداخلية 900°. كم عدد أضلاعه؟',
+      choices:['5','7','6','9'], ans:1, key:'كم مثلثاً في 900°؟',
+      exp:'900 ÷ 180 = 5 مثلثات، وعدد الأضلاع = عدد المثلثات + 2 = 7.', wrongs:{0:'5 هو عدد المثلثات. عدد الأضلاع أكثر منه باثنين.'}},
+    {text:'مثلث قائم الزاوية، طول وتره 13 سم، وطول أحد ضلعي الزاوية القائمة 5 سم. ما مساحته؟',
+      choices:['32.5 سم²','60 سم²','65 سم²','30 سم²'], ans:3, key:'هل تعرفين مثلثاً جاهزاً فيه 5 و13؟',
+      exp:'الضلع الثالث 12 (من المثلث 5، 12، 13). ضلعا الزاوية القائمة هما القاعدة والارتفاع: 5 × 12 ÷ 2 = 30.',
+      wrongs:{0:'32.5 = 13 × 5 ÷ 2: الوتر ليس ارتفاعاً على الضلع 5.', 1:'60 = 5 × 12: نسيتِ القسمة على 2 في مساحة المثلث.'}},
+    {text:'أيّ مما يأتي يصلح أن يكون أطوال أضلاع مثلث؟',
+      choices:['2، 3، 6','4، 4، 9','5، 7، 11','1، 2، 3'], ans:2, key:'هل أطول ضلع أقصر من مجموع الضلعين الآخرين؟',
+      exp:'5 + 7 = 12 أكبر من 11، فيتكوّن مثلث. أما في (1، 2، 3) فمجموع الضلعين يساوي الثالث تماماً، فلا يتكوّن مثلث.',
+      wrongs:{3:'1 + 2 = 3 يساوي الضلع الثالث تماماً، فينطبق الضلعان عليه ولا يتكوّن مثلث.'}},
+    {text:'دائرة مساحتها 36π سم². ما محيطها؟',
+      choices:['12π سم','6π سم','36π سم','18π سم'], ans:0, key:'ما نصف القطر؟',
+      exp:'π × نق² = 36π، إذن نق = 6، والمحيط 2 × π × 6 = 12π.', wrongs:{1:'6 هو نصف القطر، والمحيط 2 × π × نق.'}},
+    {text:'متوازي مستطيلات أبعاده 2 سم و3 سم و4 سم. ما مجموع مساحات أوجهه الستة؟',
+      choices:['24 سم²','26 سم²','48 سم²','52 سم²'], ans:3, key:'كم وجهاً له؟ وما أبعاد كل زوج متساوٍ منها؟',
+      exp:'الأوجه 3 أزواج: 2 × 3 = 6، و2 × 4 = 8، و3 × 4 = 12. المجموع 2 × (6 + 8 + 12) = 52.',
+      wrongs:{0:'24 هو الحجم (2 × 3 × 4)، لا مساحة الأوجه.', 1:'26 مساحة ثلاثة أوجه فقط. كل وجه يقابله وجه مساوٍ له.'}},
+    {text:'سلّم طوله 10 أمتار يستند إلى حائط، ويبعد أسفله 6 أمتار عن الحائط. على أي ارتفاع يلمس السلّم الحائط؟',
+      choices:['4 أمتار','8 أمتار','16 متراً','12 متراً'], ans:1, key:'ارسمي: الحائط والأرض والسلّم تكوّن مثلثاً. أين الزاوية القائمة؟ وأيّ ضلع هو الوتر؟',
+      exp:'الحائط عمودي على الأرض، والسلّم هو الوتر. الأطوال (6، 8، 10) مضاعف (3، 4، 5)، فالارتفاع 8 أمتار.',
+      wrongs:{0:'4 = 10 − 6. في المثلث القائم نستخدم المربعات لا الطرح المباشر.', 2:'16 = 10 + 6، ولا يمكن أن يكون أي ضلع أطول من الوتر.'}}
+  ]
+},
+{
+  id:'num', title:'الحس العددي والتحقق',
+  blurb:'مقارنة الكسور والأعداد العشرية، المنازل العشرية، استبعاد الخيارات، وتجريب الأعداد في المقارنة.',
+  key:'قدّري قبل أن تحسبي، وتحقّقي من الإجابة بعكس العملية.',
+  disc:[
+    {type:'num', label:'كسر إلى عدد عشري',
+      text:'لمقارنة كسر بعدد عشري، حوّلي الكسر إلى عدد عشري.<br>اقسمي 5 على 8: كم يساوي 5/8 عدداً عشرياً؟',
+      ans:0.625, ok:'5/8 = 0.625.', hint:'1/8 = 0.125، و5/8 خمسة أمثالها.', wrong:{}},
+    {type:'mc', label:'مقارنة عدد عشري بكسر',
+      text:'أيّهما أكبر: 0.6 أم 5/8؟',
+      choices:['0.6','5/8','متساويان'], ans:1,
+      ok:'اجعلي عدد المنازل متساوياً: 0.600 و0.625، و625 أكبر من 600.',
+      wrongs:{0:'قارني 0.600 مع 0.625 بعد جعل المنازل متساوية.', 2:'0.6 = 0.600 و5/8 = 0.625، فهما مختلفان.'}},
+    {type:'mc', label:'الخيارات المتساوية',
+      text:'في سؤال «أيّ الأعداد الآتية هو الأكبر؟» كان الخيار (أ) 0.5 والخيار (د) 1/2. ماذا تستنتجين؟',
+      choices:['الإجابة (أ) أو (د)','لا يمكن أن تكون الإجابة (أ) ولا (د)','لا يمكن استنتاج شيء'], ans:1,
+      ok:'للسؤال إجابة واحدة فقط. لو كان 0.5 هو الأكبر لكان 1/2 أكبر أيضاً، فيصبح للسؤال إجابتان. إذن نستبعد الخيارين معاً. وقد لاحظتِ تساويهما بنفسك في اختبار تحديد المستوى.',
+      wrongs:{0:'لو كانت الإجابة أحدهما لكان الآخر صحيحاً أيضاً، وللسؤال إجابة واحدة فقط.', 2:'تساوي الخيارين معلومة مفيدة. هل يمكن أن يكون للسؤال إجابتان؟'}},
+    {type:'mc', label:'الضرب التبادلي',
+      text:'لمقارنة كسرين دون آلة حاسبة، اضربي تبادلياً. لمقارنة 3/7 و4/9 نحسب: 3 × 9 = 27 (يخص الكسر الأول)، و4 × 7 = 28 (يخص الكسر الثاني). أيّ الكسرين أكبر؟',
+      choices:['3/7','4/9','متساويان'], ans:1,
+      ok:'الكسر الذي دخل بسطه في الناتج الأكبر هو الأكبر: 28 أكبر من 27، إذن 4/9 أكبر من 3/7.',
+      wrongs:{0:'27 يخص 3/7 و28 يخص 4/9. أيّ الناتجين أكبر؟', 2:'27 لا يساوي 28، فالكسران مختلفان.'}},
+    {type:'num', label:'المنازل العشرية في الضرب',
+      text:'كم يساوي 0.3 × 0.3 ؟',
+      ans:0.09, ok:'3 × 3 = 9، وعدد المنازل العشرية في الناتج = مجموعها في العددين: 1 + 1 = 2، إذن 0.09.',
+      hint:'احسبي 3 × 3، ثم ضعي الفاصلة بحيث يكون في الناتج منزلتان عشريتان.',
+      wrong:{'0.9':'في 0.3 منزلة عشرية واحدة، فيكون في الناتج منزلتان: 0.09.'}},
+    {type:'num', label:'جذر عدد عشري',
+      text:'إذن ما الجذر التربيعي لـ 0.0009؟ ابحثي عن عدد إذا ضُرب في نفسه أعطى 0.0009.',
+      ans:0.03, ok:'تحقّقي: 0.03 × 0.03 = 0.0009. في 0.0009 أربع منازل عشرية، والجذر له نصفها: منزلتان.',
+      hint:'3 × 3 = 9، وفي الناتج 4 منازل عشرية. كم منزلة في كل من العددين المضروبين؟',
+      wrong:{'0.3':'تحقّقي بالعكس: 0.3 × 0.3 = 0.09 لا 0.0009.', '0.003':'تحقّقي بالعكس: 0.003 × 0.003 = 0.000009.'}},
+    {type:'rule', label:'التحقق بالعكس',
+      text:'اكتبي بكلماتك: كيف تتأكدين من إجابة سؤال جذر أو قسمة أو معادلة قبل أن تنتقلي؟',
+      model:'أتحقّق بالعكس: الجذر أربّعه، والقسمة أضربها، وحلّ المعادلة أعوّضه فيها. إذا لم أرجع إلى المعطى فالإجابة خطأ.'},
+    {type:'mc', label:'تجريب عدد أكبر من 1',
+      text:'سؤال مقارنة: س عدد حقيقي. القيمة الأولى س²، والقيمة الثانية س.<br>جرّبي س = 2: أيّهما أكبر؟',
+      choices:['س²','س','متساويتان'], ans:0, ok:'2² = 4، وهو أكبر من 2.',
+      wrongs:{1:'2² = 4، وهو أكبر من 2.', 2:'2² = 4 لا يساوي 2.'}},
+    {type:'mc', label:'تجريب كسر',
+      text:'الآن جرّبي س = 0.5: س² = 0.25. أيّهما أكبر الآن؟',
+      choices:['س²','س','متساويتان'], ans:1, ok:'0.25 أصغر من 0.5. مربع أي عدد بين 0 و1 أصغر منه.',
+      wrongs:{0:'0.25 أصغر من 0.5.', 2:'0.25 لا يساوي 0.5.'}},
+    {type:'mc', label:'المعطيات غير كافية',
+      text:'مرة كانت القيمة الأولى أكبر، ومرة كانت الثانية أكبر. ما إجابة سؤال المقارنة إذن؟',
+      choices:CMP_CHOICES, ans:3, ok:'عندما تتغيّر النتيجة باختلاف العدد، فالإجابة «المعطيات غير كافية للمقارنة».',
+      wrongs:{0:'هذا صحيح عند س = 2 فقط، لا عند س = 0.5.', 1:'هذا صحيح عند س = 0.5 فقط، لا عند س = 2.', 2:'لم تتساويا في أيٍّ من التجربتين.'}},
+    {type:'rule', label:'تجريب الأعداد',
+      text:'اكتبي بكلماتك: ماذا تفعلين في سؤال مقارنة فيه متغيّر؟',
+      model:'أعوّض بأنواع مختلفة من الأعداد المسموح بها في السؤال: عدد أكبر من 1 مثل 2، وكسر مثل 0.5، والصفر، وعدد سالب مثل ' + NEG(1) + '. إذا تغيّرت النتيجة فالإجابة «المعطيات غير كافية».'}
+  ],
+  prac:[
+    {text:'أيّ الأعداد الآتية هو الأصغر؟',
+      choices:['3/8','0.4','0.35','2/5'], ans:2, key:'حوّلي الكسور إلى أعداد عشرية، وابحثي عن خيارين متساويين.',
+      exp:'3/8 = 0.375، و2/5 = 0.4 يساوي الخيار (ب)، فيُستبعدان معاً. الأصغر 0.35.',
+      wrongs:{0:'3/8 = 0.375، وهو أكبر من 0.350.'}},
+    {text:'أيّهما أكبر: 5/12 أم 3/7؟',
+      choices:['5/12','3/7','متساويان','لا يمكن المقارنة'], ans:1, key:'اضربي تبادلياً.',
+      exp:'5 × 7 = 35 (للكسر 5/12)، و3 × 12 = 36 (للكسر 3/7). 36 أكبر، إذن 3/7 أكبر.',
+      wrongs:{0:'اضربي تبادلياً: 35 للكسر 5/12، و36 للكسر 3/7.'}},
+    {text:'ما ناتج 0.2 × 0.04 ؟',
+      choices:['0.008','0.0008','0.08','0.8'], ans:0, key:'كم منزلة عشرية في العددين معاً؟',
+      exp:'2 × 4 = 8، والمنازل العشرية 1 + 2 = 3، إذن 0.008.', wrongs:{2:'في الناتج 3 منازل عشرية (1 + 2)، لا منزلتان.'}},
+    {text:'ما الجذر التربيعي لـ 0.0016 ؟',
+      choices:['0.4','0.004','0.16','0.04'], ans:3, key:'تحقّقي بالعكس: ربّعي كل خيار.',
+      exp:'0.04 × 0.04 = 0.0016. (0.4² = 0.16، و0.004² = 0.000016.)',
+      wrongs:{0:'تحقّقي: 0.4 × 0.4 = 0.16.', 1:'تحقّقي: 0.004 × 0.004 = 0.000016.'}},
+    {text:'إذا كان 0.25 × س = 5، فما قيمة س؟',
+      choices:['1.25','20','2','0.05'], ans:1, key:'عوّضي كل خيار في المعادلة وتحقّقي.',
+      exp:'س = 5 ÷ 0.25 = 20. تحقّقي: 0.25 × 20 = 5. (0.25 تعني الربع، والعدد الذي ربعه 5 هو 20.)',
+      wrongs:{0:'1.25 = 5 × 0.25: ضربتِ بدل أن تقسمي. تحقّقي: 0.25 × 1.25 لا يساوي 5.'}},
+    {cmp:{given:'س عدد سالب', a:'س²', b:'2س'}, ans:0,
+      key:'جرّبي عدداً سالباً مثل ' + NEG(1) + '، وآخر مثل ' + NEG(3) + '.',
+      exp:'مربع أي عدد سالب موجب، و2س سالب دائماً. إذن القيمة الأولى أكبر في كل الحالات.',
+      wrongs:{3:'جرّبي أكثر من عدد سالب: النتيجة لا تتغيّر، فالمعطيات كافية.'}},
+    {cmp:{given:'س عدد بين 0 و1', a:'1 ÷ س', b:'س'}, ans:0, key:'جرّبي س = 0.5 وس = 0.1.',
+      exp:'إذا كان س = 0.5 فإن 1 ÷ س = 2، وإذا كان س = 0.1 فإن 1 ÷ س = 10. القسمة على عدد أصغر من 1 تعطي ناتجاً أكبر، فالقيمة الأولى أكبر دائماً.',
+      wrongs:{1:'جرّبي س = 0.5: 1 ÷ 0.5 = 2، وهو أكبر من 0.5.'}},
+    {cmp:{given:'س و ص عددان صحيحان، و س أكبر من ص', a:'س²', b:'ص²'}, ans:3, key:'لا تكتفي بالأعداد الموجبة. جرّبي عدداً سالباً لـ ص.',
+      exp:'إذا كان س = 3 و ص = 2 فالقيمة الأولى أكبر (9 و4). وإذا كان س = 3 و ص = ' + NEG(5) + ' فالقيمة الثانية أكبر (9 و25). النتيجة تغيّرت، فالمعطيات غير كافية.',
+      wrongs:{0:'هذا صحيح للأعداد الموجبة فقط. جرّبي ص = ' + NEG(5) + '.'}}
+  ]
+}
+];
+const byId = {};
+MODULES.forEach((m, i) => { m.idx = i; byId[m.id] = m; });
+
+/* ---------- State ---------- */
+const KEY = 'qudurat-practice-v1';
+const store = {
+  get(){ try { const s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; } },
+  set(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} },
+  clear(){ try { localStorage.removeItem(KEY); } catch(e){} }
+};
+if (/[?&]reset\b/.test(location.search)) {
+  store.clear();
+  try { history.replaceState(null, '', location.pathname); } catch(e){}
+}
+function freshMod(){ return {phase:'intro', di:0, pi:0, d:{}, p:{}, discTime:0, updatedAt:null}; }
+function fresh(){ const s = {v:1, view:'home', mod:null, mods:{}}; MODULES.forEach(m => s.mods[m.id] = freshMod()); return s; }
+let S = store.get();
+if (!S || S.v !== 1) S = fresh();
+MODULES.forEach(m => { if (!S.mods[m.id]) S.mods[m.id] = freshMod(); });
+if (S.view === 'module' && !byId[S.mod]) S.view = 'home';
+const ui = {lastKey:null};
+
+const app = document.getElementById('app');
+const bar = document.getElementById('bar');
+
+function save(){ if (S.view === 'module') S.mods[S.mod].updatedAt = Date.now(); store.set(S); }
+function M(){ return byId[S.mod]; }
+function ST(){ return S.mods[S.mod]; }
+function dS(st, i){ return st.d[i] || (st.d[i] = {attempts:0, solved:false, revealed:false, last:'', tries:[], fb:'', fbType:'', picks:[], text:'', shown:false}); }
+function pS(st, i){ return st.p[i] || (st.p[i] = {c:null, f:null, hint:false, checked:false, time:0}); }
+function p2(x){ return (x < 10 ? '0' : '') + x; }
+function fmt(ms){ const t = Math.round(ms / 1000); return Math.floor(t / 60) + ':' + p2(t % 60); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function stripTags(s){ return String(s).replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, ''); }
+
+function parseNum(raw){
+  let s = String(raw).trim();
+  s = s.replace(/[\u0660-\u0669]/g, c => String(c.charCodeAt(0) - 0x0660))
+       .replace(/[\u06F0-\u06F9]/g, c => String(c.charCodeAt(0) - 0x06F0))
+       .replace(/[\u066B,\u060C]/g, '.')
+       .replace(/[\u2212\u2013]/g, '-')
+       .replace(/[^0-9.\-\/]/g, '');
+  if (!s) return null;
+  if (s.indexOf('/') !== -1) {
+    const parts = s.split('/'), a = parseFloat(parts[0]), b = parseFloat(parts[1]);
+    return (isFinite(a) && isFinite(b) && b !== 0) ? a / b : null;
+  }
+  const v = parseFloat(s);
+  return isFinite(v) ? v : null;
+}
+function near(a, b){ return Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(b)); }
+function matchWrong(map, v){
+  for (const k in map) { if (near(v, parseFloat(k))) return map[k]; }
+  return '';
+}
+
+/* ---------- Progress helpers ---------- */
+function discDone(st, m){ let n = 0; m.disc.forEach((s, i) => { const d = st.d[i]; if (d && (d.solved || d.revealed || d.shown)) n++; }); return n; }
+function pracScore(st, m){ let r = 0, n = 0; m.prac.forEach((q, i) => { const p = st.p[i]; if (p && p.checked) { n++; if (p.c === q.ans) r++; } }); return {r, n}; }
+function statusText(m){
+  const st = S.mods[m.id];
+  if (st.phase === 'intro') return {t:'لم تبدئي بعد', cls:''};
+  if (st.phase === 'disc') return {t:'اكتشاف القاعدة: الخطوة ' + (st.di + 1) + ' من ' + m.disc.length, cls:''};
+  if (st.phase === 'recap') return {t:'انتهى الاكتشاف، والتدريب لم يبدأ', cls:''};
+  if (st.phase === 'prac') return {t:'التدريب: السؤال ' + (st.pi + 1) + ' من ' + m.prac.length, cls:''};
+  const s = pracScore(st, m);
+  return {t:'مكتملة: ' + s.r + ' من ' + m.prac.length + ' في التدريب', cls:' done'};
+}
+
+/* ---------- Rendering ---------- */
+function renderBar(){
+  if (S.view === 'module') {
+    const m = M();
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>' + m.title + '</strong><span>الوحدة ' + (m.idx + 1) + ' من ' + MODULES.length + '</span></div>' +
+      '<button class="linkbtn" data-action="home">كل الوحدات</button></div>';
+  } else {
+    bar.innerHTML = '<div class="bar-in"><div class="where"><strong>التدريب الموجّه</strong><span>القدرات العامة، القسم الكمي</span></div></div>';
+  }
+}
+
+function renderHome(){
+  const rows = MODULES.map(m => {
+    const st = S.mods[m.id], s = statusText(m);
+    const btn = st.phase === 'intro' ? '<button class="primary" data-action="open" data-m="' + m.id + '">ابدئي</button>'
+      : st.phase === 'done' ? '<button class="ghost" data-action="open" data-m="' + m.id + '">النتيجة</button>'
+      : '<button class="primary" data-action="open" data-m="' + m.id + '">تابعي</button>';
+    return '<li><div class="modnum" aria-hidden="true">' + (m.idx + 1) + '</div>' +
+      '<div><h2>' + m.title + '</h2><p class="muted">' + m.blurb + '</p><div class="modstatus' + s.cls + '">' + s.t + '</div></div>' + btn + '</li>';
+  }).join('');
+  const any = MODULES.some(m => S.mods[m.id].phase !== 'intro');
+  return '<section class="sheet">' +
+    '<h1>التدريب الموجّه</h1>' +
+    '<p class="lede">في كل وحدة تكتشفين القاعدة بنفسك من أمثلة صغيرة، ثم تكتبينها بكلماتك، ثم تتدربين عليها بأسئلة مثل أسئلة الاختبار. الهدف أن تعرفي متى تستخدمين كل فكرة، لا أن تحفظي قوانين.</p>' +
+    '<p class="muted">الترتيب المقترح من 1 إلى 4. يُحفظ تقدّمك تلقائياً على هذا الجهاز.</p>' +
+    '<ol class="modlist">' + rows + '</ol></section>' +
+    (any ? '<section class="sheet"><h2>إرسال التقدّم</h2><p class="muted">تقرير واحد يجمع كل ما أنجزتِه في الوحدات.</p>' + reportActions('all') + '</section>' : '');
+}
+
+function renderIntro(m){
+  return '<section class="sheet">' +
+    '<p class="muted" style="margin:0 0 .25rem">الوحدة ' + (m.idx + 1) + '</p><h1>' + m.title + '</h1>' +
+    '<p class="keyq">السؤال الذي تسألينه لنفسك في هذه الوحدة: ' + m.key + '</p>' +
+    '<p>الجزء الأول: اكتشاف القاعدة في ' + m.disc.length + ' خطوات قصيرة. اكتبي إجابتك، وإذا أخطأتِ ستظهر لك فكرة تساعدك.</p>' +
+    '<p>الجزء الثاني: ' + m.prac.length + ' أسئلة تدريب مثل أسئلة الاختبار، وبعد كل سؤال يظهر لك الحل.</p>' +
+    '<p class="muted">جهّزي ورقة وقلماً، ولا تستخدمي الآلة الحاسبة.</p>' +
+    '<div class="actions"><button class="primary" data-action="startDisc">ابدئي الاكتشاف</button></div></section>';
+}
+
+function renderDisc(m, st){
+  const i = st.di, step = m.disc[i], d = dS(st, i);
+  const finished = d.solved || d.revealed || (step.type === 'rule' && d.shown);
+  let h = '<div class="phase"><span>اكتشاف القاعدة</span><span>الخطوة ' + (i + 1) + ' من ' + m.disc.length + '</span></div>' +
+    '<div class="track" aria-hidden="true"><i style="width:' + Math.round((i + (finished ? 1 : 0)) / m.disc.length * 100) + '%"></i></div>' +
+    '<article class="sheet step"><div class="steptext" id="focus" tabindex="-1">' + step.text + '</div>';
+
+  if (step.type === 'num') {
+    const lock = d.solved || d.revealed;
+    h += '<div class="numrow"><label for="numIn">إجابتك:</label>' +
+      '<input id="numIn" type="text" inputmode="decimal" dir="ltr" autocomplete="off" value="' + esc(d.last) + '"' + (lock ? ' disabled' : '') + '>' +
+      '<button class="primary" data-action="numCheck"' + (lock ? ' disabled' : '') + '>تحقّقي</button></div>';
+  } else if (step.type === 'mc') {
+    const lock = d.solved || d.revealed;
+    h += '<div class="choices" role="group" aria-label="الخيارات">' + step.choices.map((c, k) => {
+      let cls = 'choice';
+      if (lock && k === step.ans) cls += ' right';
+      else if (d.picks.indexOf(k) !== -1) cls += ' wrong';
+      else if (lock) cls += ' dim';
+      const dis = lock || d.picks.indexOf(k) !== -1;
+      return '<button class="' + cls + '" data-action="mcPick" data-i="' + k + '"' + (dis ? ' disabled' : '') + '><span class="let">' + LETTERS[k] + '</span><span>' + c + '</span></button>';
+    }).join('') + '</div>';
+  } else {
+    h += '<div class="rulebox"><label class="sr" for="ruleIn">القاعدة بكلماتك</label>' +
+      '<textarea id="ruleIn" placeholder="اكتبي القاعدة هنا بأسلوبك">' + esc(d.text) + '</textarea></div>';
+    if (d.shown) h += '<div class="model"><b>صياغة مقترحة للمقارنة</b>' + step.model + '</div>';
+    else h += '<div class="actions" style="margin-top:.8rem"><button class="ghost" data-action="ruleShow"' + (d.text.trim().length < 3 ? ' disabled' : '') + '>قارني بصياغة مقترحة</button></div>';
+  }
+  if (d.fb) h += '<div class="fb fb-' + d.fbType + '" role="status">' + d.fb + '</div>';
+  h += '</article>';
+
+  const last = i === m.disc.length - 1;
+  const hint = finished ? '' : (step.type === 'rule' ? 'اكتبي القاعدة أولاً، ثم قارنيها' : 'أجيبي للمتابعة');
+  h += '<div class="stepnav"><button class="ghost" data-action="dPrev"' + (i === 0 ? ' disabled' : '') + '>السابق</button>' +
+    '<p class="hint" aria-live="polite">' + hint + '</p>' +
+    '<button class="primary" data-action="dNext"' + (finished ? '' : ' disabled') + '>' + (last ? 'إنهاء الاكتشاف' : 'التالي') + '</button></div>';
+  return h;
+}
+
+function ruleListHtml(m, st){
+  return '<ol class="rulelist">' + m.disc.map((s, i) => {
+    if (s.type !== 'rule') return '';
+    const d = st.d[i];
+    const hers = d && d.text.trim() ? esc(d.text.trim()) : '<span class="muted">لم تُكتب</span>';
+    return '<li><h3>' + s.label + '</h3><p class="hers"><span>صياغتك</span>' + hers + '</p><p class="ours"><span>الصياغة المقترحة</span>' + s.model + '</p></li>';
+  }).join('') + '</ol>';
+}
+
+function renderRecap(m, st){
+  return '<section class="sheet"><h1>خلاصة القواعد</h1>' +
+    '<p class="lede">هذه القواعد التي اكتشفتِها. اقرئي صياغتك بجانب الصياغة المقترحة، ثم انتقلي إلى التدريب.</p>' +
+    ruleListHtml(m, st) +
+    '<p class="keyq">قبل كل سؤال تدريب اسألي نفسك: ' + m.key + '</p>' +
+    '<div class="actions"><button class="ghost" data-action="backToDisc">مراجعة الخطوات</button><button class="primary" data-action="startPrac">ابدئي التدريب</button></div></section>';
+}
+
+function renderPrac(m, st){
+  const i = st.pi, q = m.prac[i], p = pS(st, i);
+  const opts = q.cmp ? CMP_CHOICES : q.choices;
+  let h = '<div class="phase"><span>التدريب</span><span>السؤال ' + (i + 1) + ' من ' + m.prac.length + '</span></div>' +
+    '<div class="track" aria-hidden="true"><i style="width:' + Math.round((i + (p.checked ? 1 : 0)) / m.prac.length * 100) + '%"></i></div>' +
+    '<article class="sheet q"><div class="qnum" aria-hidden="true">' + (i + 1) + '</div>';
+  if (q.cmp) {
+    h += '<p class="qtext" id="focus" tabindex="-1">قارني بين القيمة الأولى والقيمة الثانية.</p><div class="cmp">' +
+      (q.cmp.given ? '<p class="given"><span>المعطيات: </span>' + q.cmp.given + '</p>' : '') +
+      '<div class="cmpgrid"><div><span>القيمة الأولى</span><b>' + q.cmp.a + '</b></div><div><span>القيمة الثانية</span><b>' + q.cmp.b + '</b></div></div></div>';
+  } else {
+    h += '<p class="qtext" id="focus" tabindex="-1">' + q.text + '</p>';
+  }
+  h += '<div class="choices" role="radiogroup" aria-label="الخيارات">' + opts.map((c, k) => {
+    let cls = 'choice';
+    if (p.checked) { if (k === q.ans) cls += ' right'; else if (k === p.c) cls += ' wrong'; else cls += ' dim'; }
+    else if (p.c === k) cls += ' on';
+    return '<button class="' + cls + '" role="radio" aria-checked="' + (p.c === k) + '" data-action="pChoose" data-i="' + k + '"' + (p.checked ? ' disabled' : '') + '>' +
+      '<span class="let">' + LETTERS[k] + '</span><span>' + c + '</span></button>';
+  }).join('') + '</div>';
+  h += '<div class="conf"><p id="confLbl">كم أنتِ متأكدة من إجابتك؟</p><div class="cfrow" role="radiogroup" aria-labelledby="confLbl">' +
+    CONF.map(c => '<button class="cf cf-' + c.id + (p.f === c.id ? ' on' : '') + '" role="radio" aria-checked="' + (p.f === c.id) + '" data-action="pConf" data-f="' + c.id + '"' + (p.checked ? ' disabled' : '') + '>' +
+      '<span class="mk" aria-hidden="true">' + c.mark + '</span>' + c.label + '</button>').join('') + '</div></div>';
+
+  if (p.checked) {
+    const right = p.c === q.ans;
+    let fb = right ? '<b>صحيح.</b> ' + q.exp
+      : '<b>الإجابة الصحيحة: (' + LETTERS[q.ans] + ')</b><br>' + (q.wrongs && q.wrongs[p.c] ? q.wrongs[p.c] + '<br>' : '') + q.exp;
+    fb += '<span class="keyline">السؤال الذي يفتح الحل: ' + q.key + '</span>';
+    h += '<div class="fb fb-' + (right ? 'ok' : 'bad') + '" role="status">' + fb + '</div>';
+  } else if (p.hint) {
+    h += '<div class="keybox" role="status"><b>تلميح: </b>' + q.key + '</div>';
+  } else {
+    h += '<div class="actions" style="margin-bottom:1rem"><button class="ghost" data-action="pHint">أحتاج تلميحاً</button></div>';
+  }
+  h += '</article>';
+
+  const ready = p.c !== null && p.f !== null;
+  const last = i === m.prac.length - 1;
+  h += '<div class="stepnav"><span></span><p class="hint" aria-live="polite">' + (p.checked || ready ? '' : 'اختاري إجابة ومدى ثقتك') + '</p>' +
+    (p.checked ? '<button class="primary" data-action="pNext">' + (last ? 'إنهاء الوحدة' : 'السؤال التالي') + '</button>'
+               : '<button class="primary" data-action="pCheck"' + (ready ? '' : ' disabled') + '>تحقّقي من إجابتك</button>') + '</div>';
+  return h;
+}
+
+function renderDone(m, st){
+  const s = pracScore(st, m);
+  const next = MODULES[m.idx + 1];
+  return '<section class="sheet"><h1>أنهيتِ وحدة ' + m.title + '</h1>' +
+    '<p class="score">' + s.r + ' من ' + m.prac.length + '</p><p class="muted">في أسئلة التدريب</p>' +
+    '<p>أرسلي تقرير الوحدة لمن يساعدك في المذاكرة.</p>' + reportActions('mod') + '</section>' +
+    '<section class="sheet"><h2>خلاصة القواعد</h2>' + ruleListHtml(m, st) +
+    '<div class="actions">' + (next ? '<button class="primary" data-action="open" data-m="' + next.id + '">الوحدة التالية: ' + next.title + '</button>' : '') +
+    '<button class="ghost" data-action="home">كل الوحدات</button><button class="ghost" data-action="restartMod">إعادة الوحدة</button></div></section>';
+}
+
+function reportActions(scope){
+  const canShare = typeof navigator.share === 'function';
+  return '<div class="actions">' +
+    (canShare ? '<button class="primary" data-action="share" data-scope="' + scope + '">إرسال التقرير</button>' : '') +
+    '<button class="' + (canShare ? 'ghost' : 'primary') + '" data-action="copy" data-scope="' + scope + '">نسخ التقرير</button>' +
+    '<button class="ghost" data-action="download" data-scope="' + scope + '">تنزيل ملف التقرير</button></div>' +
+    '<p class="status" id="status" aria-live="polite"></p>' +
+    '<details class="raw"><summary>عرض نص التقرير</summary><textarea readonly rows="10">' + esc(scope === 'all' ? reportAll() : modReport(M()).join('\n')) + '</textarea></details>';
+}
+
+function render(){
+  renderBar();
+  let html, key;
+  if (S.view === 'home') { html = renderHome(); key = 'home'; }
+  else {
+    const m = M(), st = ST();
+    if (st.phase === 'intro') html = renderIntro(m);
+    else if (st.phase === 'disc') html = renderDisc(m, st);
+    else if (st.phase === 'recap') html = renderRecap(m, st);
+    else if (st.phase === 'prac') html = renderPrac(m, st);
+    else html = renderDone(m, st);
+    key = m.id + ':' + st.phase + ':' + (st.phase === 'disc' ? st.di : st.phase === 'prac' ? st.pi : '');
+  }
+  app.innerHTML = html;
+  if (key !== ui.lastKey) {
+    ui.lastKey = key;
+    window.scrollTo(0, 0);
+    const f = document.getElementById('focus');
+    if (f) f.focus({preventScroll:true});
+  }
+}
+function refocus(sel){ const el = app.querySelector(sel); if (el) el.focus(); }
+
+/* ---------- Reports ---------- */
+function stamp(t){ const d = new Date(t || Date.now()); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()); }
+
+function modReport(m){
+  const st = S.mods[m.id], L = [];
+  L.push('الوحدة ' + (m.idx + 1) + ': ' + m.title);
+  if (st.phase === 'intro') { L.push('لم تبدأ بعد.'); return L; }
+  L.push('آخر نشاط: ' + stamp(st.updatedAt));
+  L.push('الاكتشاف: ' + discDone(st, m) + ' من ' + m.disc.length + ' خطوات، الوقت ' + fmt(st.discTime));
+  const hard = [];
+  m.disc.forEach((s, i) => {
+    const d = st.d[i];
+    if (!d || s.type === 'rule' || d.attempts === 0) return;
+    const tried = s.type === 'num' ? d.tries.join('، ') : d.picks.map(k => s.choices[k]).join('، ');
+    hard.push('  - ' + s.label + ': ' + (d.revealed ? 'ظهرت الإجابة بعد محاولتين' : 'صحّت في المحاولة الثانية') + (tried ? ' (أدخلت: ' + tried + ')' : ''));
+  });
+  L.push('- خطوات احتاجت أكثر من محاولة: ' + (hard.length ? '' : 'لا يوجد'));
+  hard.forEach(x => L.push(x));
+  L.push('- صياغتها للقواعد:');
+  m.disc.forEach((s, i) => {
+    if (s.type !== 'rule') return;
+    const d = st.d[i];
+    L.push('  - ' + s.label + ': ' + (d && d.text.trim() ? '«' + d.text.trim().replace(/\s+/g, ' ') + '»' : 'لم تكتب بعد'));
+  });
+  if (st.phase === 'prac' || st.phase === 'done') {
+    const sc = pracScore(st, m);
+    let t = 0; const wrongSure = [], hints = [];
+    m.prac.forEach((q, i) => { const p = st.p[i]; if (!p) return; t += p.time; if (p.checked && p.c !== q.ans && p.f === 'sure') wrongSure.push('ت' + (i + 1)); if (p.hint) hints.push('ت' + (i + 1)); });
+    L.push('التدريب: ' + sc.r + ' صحيحة من ' + sc.n + ' مُجابة (من أصل ' + m.prac.length + ')، الوقت ' + fmt(t));
+    L.push('- خاطئة مع ثقة: ' + (wrongSure.join('، ') || 'لا يوجد'));
+    L.push('- استخدمت التلميح في: ' + (hints.join('، ') || 'لا شيء'));
+    m.prac.forEach((q, i) => {
+      const p = st.p[i];
+      if (!p || !p.checked) return;
+      const r = p.c === q.ans;
+      const cf = (CONF.find(c => c.id === p.f) || {label:''}).label;
+      L.push('  ت' + (i + 1) + ' | ' + (r ? 'صحيحة' : 'خاطئة: اختارت ' + LETTERS[p.c] + ' والصحيح ' + LETTERS[q.ans]) + ' | ' + cf + ' | ' + fmt(p.time) + (p.hint ? ' | بتلميح' : ''));
+      if (!r && q.wrongs && q.wrongs[p.c]) L.push('     خطأ محتمل: ' + stripTags(q.wrongs[p.c]));
+    });
+  }
+  return L;
+}
+function reportAll(){
+  const L = ['تقرير التدريب الموجّه: القدرات العامة، القسم الكمي', 'تاريخ التقرير: ' + stamp(), ''];
+  MODULES.forEach(m => { L.push.apply(L, modReport(m)); L.push(''); });
+  return L.join('\n').trim();
+}
+function reportText(scope){
+  if (scope === 'all') return reportAll();
+  return ['تقرير التدريب الموجّه: القدرات العامة، القسم الكمي', ''].concat(modReport(M())).join('\n');
+}
+
+function status(msg){ const el = document.getElementById('status'); if (el) el.textContent = msg; }
+function legacyCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+  ta.remove(); return ok;
+}
+function copyText(text){
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).then(() => true, () => legacyCopy(text));
+  return Promise.resolve(legacyCopy(text));
+}
+
+/* ---------- Actions ---------- */
+function checkNum(){
+  const m = M(), st = ST(), step = m.disc[st.di], d = dS(st, st.di);
+  const input = document.getElementById('numIn');
+  if (!input) return;
+  d.last = input.value;
+  const v = parseNum(input.value);
+  if (v === null) { d.fb = 'اكتبي إجابتك رقماً.'; d.fbType = 'bad'; save(); render(); refocus('#numIn'); return; }
+  if (near(v, step.ans)) {
+    d.solved = true; d.fb = '<b>صحيح.</b> ' + step.ok; d.fbType = 'ok';
+    save(); render(); refocus('[data-action="dNext"]'); return;
+  }
+  d.attempts++; d.tries.push(input.value.trim());
+  const specific = matchWrong(step.wrong || {}, v);
+  if (d.attempts >= 2) {
+    d.revealed = true; d.fbType = 'reveal';
+    d.fb = (specific ? specific + '<br>' : '') + '<b>الإجابة: ' + step.ans + '</b><br>' + step.ok;
+    save(); render(); refocus('[data-action="dNext"]');
+  } else {
+    d.fbType = 'bad';
+    d.fb = (specific || 'ليس بعد. حاولي مرة أخرى.') + (step.hint ? '<span class="hintline">فكرة تساعدك: ' + step.hint + '</span>' : '');
+    save(); render(); refocus('#numIn');
+  }
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if (!b || b.disabled) return;
+  const act = b.dataset.action;
+  let st, m, d, p, q;
+  switch (act) {
+    case 'home': S.view = 'home'; save(); render(); break;
+    case 'open': S.view = 'module'; S.mod = b.dataset.m; save(); render(); break;
+    case 'startDisc': st = ST(); st.phase = 'disc'; st.di = 0; save(); render(); break;
+    case 'numCheck': checkNum(); break;
+    case 'mcPick': {
+      m = M(); st = ST(); const step = m.disc[st.di]; d = dS(st, st.di);
+      const k = +b.dataset.i;
+      if (k === step.ans) { d.solved = true; d.fb = '<b>صحيح.</b> ' + step.ok; d.fbType = 'ok'; save(); render(); refocus('[data-action="dNext"]'); }
+      else {
+        d.attempts++; d.picks.push(k);
+        if (d.attempts >= 2) {
+          d.revealed = true; d.fbType = 'reveal';
+          d.fb = (step.wrongs[k] ? step.wrongs[k] + '<br>' : '') + '<b>الإجابة: ' + step.choices[step.ans] + '</b><br>' + step.ok;
+          save(); render(); refocus('[data-action="dNext"]');
+        } else {
+          d.fbType = 'bad'; d.fb = (step.wrongs[k] || 'ليس هذا.') + ' حاولي مرة أخرى.';
+          save(); render(); refocus('.choice:not(:disabled)');
+        }
+      }
+      break;
+    }
+    case 'ruleShow': st = ST(); d = dS(st, st.di); d.shown = true; save(); render(); refocus('[data-action="dNext"]'); break;
+    case 'dPrev': st = ST(); if (st.di > 0) { st.di--; save(); render(); } break;
+    case 'dNext': m = M(); st = ST(); if (st.di < m.disc.length - 1) st.di++; else st.phase = 'recap'; save(); render(); break;
+    case 'backToDisc': st = ST(); st.phase = 'disc'; st.di = 0; save(); render(); break;
+    case 'startPrac': st = ST(); st.phase = 'prac'; st.pi = 0; save(); render(); break;
+    case 'pChoose': st = ST(); pS(st, st.pi).c = +b.dataset.i; save(); render(); refocus('[data-action="pChoose"][data-i="' + b.dataset.i + '"]'); break;
+    case 'pConf': st = ST(); pS(st, st.pi).f = b.dataset.f; save(); render(); refocus('[data-action="pConf"][data-f="' + b.dataset.f + '"]'); break;
+    case 'pHint': st = ST(); pS(st, st.pi).hint = true; save(); render(); break;
+    case 'pCheck': st = ST(); p = pS(st, st.pi); if (p.c === null || p.f === null) return; p.checked = true; save(); render(); refocus('[data-action="pNext"]'); break;
+    case 'pNext': m = M(); st = ST(); if (st.pi < m.prac.length - 1) st.pi++; else st.phase = 'done'; save(); render(); break;
+    case 'restartMod':
+      if (window.confirm('ستُحذف إجاباتك في هذه الوحدة وتبدئينها من جديد. هل أنتِ متأكدة؟')) { S.mods[S.mod] = freshMod(); ui.lastKey = null; save(); render(); }
+      break;
+    case 'share':
+      navigator.share({title:'تقرير التدريب الموجّه', text:reportText(b.dataset.scope)})
+        .then(() => status('تمت المشاركة.'))
+        .catch(err => { if (!err || err.name !== 'AbortError') status('تعذّرت المشاركة. استخدمي زر نسخ التقرير.'); });
+      break;
+    case 'copy':
+      copyText(reportText(b.dataset.scope)).then(ok => status(ok ? 'تم نسخ التقرير. الصقيه في رسالة وأرسليه.' : 'لم يتم النسخ تلقائياً. افتحي «عرض نص التقرير» وانسخيه يدوياً.'));
+      break;
+    case 'download': {
+      const blob = new Blob(['\ufeff' + reportText(b.dataset.scope)], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = b.dataset.scope === 'all' ? 'qudurat-practice-all.txt' : 'qudurat-practice-' + S.mod + '.txt';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      status('تم تنزيل ملف التقرير.');
+      break;
+    }
+  }
+});
+
+app.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'numIn') { e.preventDefault(); checkNum(); }
+});
+app.addEventListener('input', e => {
+  if (e.target.id === 'ruleIn') {
+    const st = ST(), d = dS(st, st.di);
+    d.text = e.target.value; save();
+    const btn = app.querySelector('[data-action="ruleShow"]');
+    if (btn) btn.disabled = d.text.trim().length < 3;
+  }
+});
+
+/* ---------- Time: counts only while a step or an unanswered practice question is on screen ---------- */
+let lastTick = Date.now();
+setInterval(() => {
+  const now = Date.now(); let dt = now - lastTick; lastTick = now;
+  if (dt > 5000) dt = 1000;
+  if (S.view !== 'module' || document.hidden) return;
+  const st = ST();
+  if (st.phase === 'disc') { st.discTime += dt; store.set(S); }
+  else if (st.phase === 'prac') { const p = pS(st, st.pi); if (!p.checked) { p.time += dt; store.set(S); } }
+}, 1000);
+document.addEventListener('visibilitychange', () => { lastTick = Date.now(); });
+
+render();
+})();
+</script>
+</body>
+</html>
